@@ -65,9 +65,8 @@ def startGameUpdate(gameTimeLocal, opName):
     print('The game today is between your Buffalo Sabres and the ' + str(opName) + '. It starts at ' +
           str(gameTimeLocal.strftime("%H:%M:%S")) + ' local time')
     # If the start time of the game has not passed, wait until 200 seconds before it starts.
-    # if tD.days > 0:
-    print("Waiting", str(tD))
-    time.sleep(tD.seconds - 200)
+    if datetime.datetime.now() < gameTimeLocal:
+        time.sleep(tD.seconds - 200)
 
 
 # Function that does most of the updating throughout the game, checks if the Sabres or their opponent has scored a goal

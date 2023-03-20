@@ -26,8 +26,8 @@ def checkForGame(today):
     # Finds the timezone of the current user. Tested in eastern time on Windows, macOS, and Ubuntu. Only supports US
     # timezones at present
     timeZone = time.tzname
-    timeZoneOffset = {'EST': -5, 'Eastern Standard Time': -5, 'CST': -6, 'Central Standard Time': -6,
-                      'MST': -7, 'Mountain Standard Time': -7, 'PST': -8, 'Pacific Standard Time': -8}
+    timeZoneOffset = {'EST': -4, 'Eastern Standard Time': -4, 'CST': -5, 'Central Standard Time': -5,
+                      'MST': -6, 'Mountain Standard Time': -6, 'PST': -7, 'Pacific Standard Time': -7}
 
     # Gets all games on today
     dates = CHECKGAME_response["dates"]
@@ -66,6 +66,7 @@ def startGameUpdate(gameTimeLocal, opName):
           str(gameTimeLocal.strftime("%H:%M:%S")) + ' local time')
     # If the start time of the game has not passed, wait until 200 seconds before it starts.
     if datetime.datetime.now() < gameTimeLocal:
+        print("True")
         time.sleep(tD.seconds - 200)
 
 

@@ -7,30 +7,18 @@ This is a Python script that tracks and provides live updates for Buffalo Sabres
 Before running this script, make sure you have the following dependencies installed:
 
 - Python 3.x
-- requests library
-- pygame library
 
-You can install the required libraries using pip:
+You can install the required libraries using the `requirements.txt` file provided:
 
 ```bash
-pip install requests pygame
+pip install -r requirements.txt
 ```
 
 ## Usage
 
 1. Clone this repository or download the `sabres_game_tracker.py` file.
 
-2. Create a folder named `audioFiles` in the same directory as the script. Inside the `audioFiles` folder, create a JSON file named `SabresGoalSongs.json`. This JSON file should contain mappings of player names to their respective goal songs. An example structure is provided below:
-
-```json
-{
-    "PlayerName1": "path_to_goal_song1.mp3",
-    "PlayerName2": "path_to_goal_song2.mp3",
-    "default": "path_to_default_goal_song.mp3"
-}
-```
-
-3. Run the script using the following command:
+2. Run the script using the following command:
 
 ```bash
 python sabres_game_tracker.py
@@ -57,6 +45,8 @@ The script works by:
 - The script assumes that the Sabres are in the Eastern Time Zone (ET) and calculates game start times accordingly. It may need adjustments for other time zones.
 
 - Ensure that your audio files (goal songs) are in the correct format and their paths are correctly specified in the `SabresGoalSongs.json` file.
+
+- The `audioFiles` folder should be included when you clone the GitHub repository.
 
 - The script uses the NHL API, which may have rate limits and may require an API key for extensive use.
 

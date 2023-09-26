@@ -1,15 +1,69 @@
-# Sabres Goal Lamp Code
+# NHL Game Score Tracker
 
-I am by no means a software engineer and there are definitly more efficient ways to do this but I wanted to make it available to anyone that wanted to try it out. This code will update every morning to check if there is a Buffalo Sabres game and wait until the game starts. Then when the Sabres score a goal the goal scorers goal song will play. This is version one of this code and in the future I plan to update it to include hardware support. 
+This is a Python script that tracks and provides live updates for Buffalo Sabres NHL hockey games. It uses the NHL API to fetch game information and updates, allowing you to keep track of Sabres games and hear their goal songs when they score.
 
-It uses the NHL api and is about 30 seconds behind cable but I think I have it as close as it can be as I poll the api as often as allowed by the NHL. 
+## Prerequisites
 
-This should work on all operating systems (tried on MacOS, Windows, and Ubuntu). This code requires Python 3. To use this code, download this repository and navigate to the installed folder using the command line (terminal on MacOS, cmd on Windows) and install the required libraryies use the requirements.txt file.
+Before running this script, make sure you have the following dependencies installed:
 
-```pip3 install -r requirements.txt```
+- Python 3.x
+- requests library
+- pygame library
 
-Once in the downloaded folder and all the external libraries are installed used the command in your terminal window: 
+You can install the required libraries using pip:
 
-```python3 /path-to-code/sabresGoalCheck.py```
+```bash
+pip install requests pygame
+```
 
-Then press enter/return and the code will begin running. It will run until you stop it by pressing control+c or closing the terminal window. 
+## Usage
+
+1. Clone this repository or download the `sabres_game_tracker.py` file.
+
+2. Create a folder named `audioFiles` in the same directory as the script. Inside the `audioFiles` folder, create a JSON file named `SabresGoalSongs.json`. This JSON file should contain mappings of player names to their respective goal songs. An example structure is provided below:
+
+```json
+{
+    "PlayerName1": "path_to_goal_song1.mp3",
+    "PlayerName2": "path_to_goal_song2.mp3",
+    "default": "path_to_default_goal_song.mp3"
+}
+```
+
+3. Run the script using the following command:
+
+```bash
+python sabres_game_tracker.py
+```
+
+## How It Works
+
+The script works by:
+
+1. Checking if there is a Buffalo Sabres game on the current day by using the NHL API.
+
+2. If a game is found, it retrieves the game information, opponent details, and game start time.
+
+3. It then waits for the game to start and provides information about the game, including the opponent and start time.
+
+4. During the game, it continuously checks for score updates and plays the appropriate goal song when the Sabres score a goal.
+
+5. It provides live score updates throughout the game until it's over.
+
+6. After the game is finished, it waits until the next day to check for new games.
+
+## Important Notes
+
+- The script assumes that the Sabres are in the Eastern Time Zone (ET) and calculates game start times accordingly. It may need adjustments for other time zones.
+
+- Ensure that your audio files (goal songs) are in the correct format and their paths are correctly specified in the `SabresGoalSongs.json` file.
+
+- The script uses the NHL API, which may have rate limits and may require an API key for extensive use.
+
+- This script provides basic functionality and can be expanded upon for further customization or integration into other applications.
+
+## License
+
+This script is provided under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+Feel free to contribute to this project or customize it to meet your specific needs. Enjoy tracking Buffalo Sabres games with their goal songs!

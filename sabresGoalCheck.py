@@ -114,12 +114,19 @@ def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url):
 
     # Checks if the Sabres had scored.
     sabreScoreBool = sabres_score < newSabresScore
+    opScoreBool = opScore < newOpScore
 
     # If the Sabres scored call the playing music function.
     if sabreScoreBool:
         LIVEGAME_response = requests.get(url).json()
         goalData = LIVEGAME_response["liveData"]["plays"]
         playGoalSong(goalData)
+
+    if opScoreBool:
+        pygame.mixer.music.load('./audioFiles/losing_horn.mp3')
+        pygame.mixer.music.play()
+        time.sleep(5)
+        pygame.mixer.music.stop()
 
     # Returns the if the Sabres or Opponent scored, the current Sabres' score, their Opponents' score, whether if
     # the game is over.
@@ -165,11 +172,19 @@ while True:
         # Call start game function
         startGameUpdate(GT, oppName)
 
+        # Play Sabres Theme (well...the old school one anyway)
+        pygame.mixer.music.load('./audioFiles/SabreDance.mp3')
+        pygame.mixer.music.play()
+
         # print(GID)
         # Call the during game update function to initialize each of the return variables for the main loop
         [didSabresScore, didOppScore, sabresScore, OpScore, isOver] = duringGameUpdate(SHOA, OHOA, url)
 
-        # Loops until the game is over, calling the game update function adn printer function
+        # Print the score - if we start the program after the game has started this is a current update
+        print("The score of the game is now BUF: " + str(sabresScore) + " " +
+              oppAbbreviation + ": " + str(OpScore))
+
+        # Loops until the game is over, calling the game update function and printer function
         while not isOver:
             [didSabresScore, didOppScore, sabresScore, OpScore, isOver] = duringGameUpdate(SHOA, OHOA, url)
             if didSabresScore or didOppScore:

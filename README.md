@@ -18,11 +18,12 @@ pip install -r requirements.txt
 
 1. Clone this repository or download the `sabres_game_tracker.py` file.
 
-2. Run the script using the following command:
+2a. Manually run the script using the following command:
 
 ```bash
 python sabres_game_tracker.py
 ```
+2b. Automatically run the script (if it is in your documents folder) by running "SabreLamp.command."
 
 ## How It Works
 

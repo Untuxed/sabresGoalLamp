@@ -101,7 +101,7 @@ def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url):
     sabres_score = LIVEGAME_response["liveData"]["linescore"]["teams"][SabresHomeOrAway]["goals"]
     opScore = LIVEGAME_response["liveData"]["linescore"]["teams"][OpHomeOrAway]["goals"]
 
-    # Sleeps for 11 seconds. The NHL api game gets mad if you do it more often.
+    # Sleeps for 5 seconds. The NHL api game gets mad if you do it more often.
     time.sleep(5)
 
     # Gets the new score of the game after waiting eleven seconds.

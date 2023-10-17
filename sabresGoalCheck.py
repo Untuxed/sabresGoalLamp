@@ -67,7 +67,7 @@ def startGameUpdate(gameTimeLocal, opName):
     # If the start time of the game has not passed, wait until 200 seconds before it starts.
     if datetime.datetime.now() < gameTimeLocal:
         print("True")
-        time.sleep(tD.seconds - 200)
+        time.sleep(abs(tD.seconds - 200))
 
 
 # Function that does most of the updating throughout the game, checks if the Sabres or their opponent has scored a goal

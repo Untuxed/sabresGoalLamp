@@ -101,8 +101,8 @@ def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url):
     sabres_score = LIVEGAME_response["liveData"]["linescore"]["teams"][SabresHomeOrAway]["goals"]
     opScore = LIVEGAME_response["liveData"]["linescore"]["teams"][OpHomeOrAway]["goals"]
 
-    # Sleeps for 5 seconds. The NHL api game gets mad if you do it more often.
-    time.sleep(5)
+    # Sleeps for 10 seconds. The NHL api game gets mad if you do it more often.
+    time.sleep(10)
 
     # Gets the new score of the game after waiting eleven seconds.
     LIVEGAME_response = requests.get(url).json()
@@ -175,6 +175,8 @@ while True:
         # Play Sabres Theme (well...the old school one anyway)
         pygame.mixer.music.load('./audioFiles/SabreDance.mp3')
         pygame.mixer.music.play()
+        time.sleep(20)
+        pygame.mixer.music.stop()
 
         # print(GID)
         # Call the during game update function to initialize each of the return variables for the main loop

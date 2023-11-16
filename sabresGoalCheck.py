@@ -16,44 +16,43 @@ pygame.init()
 pygame.mixer.init()
 
 
-# Function that checks if there is a Buffalo Sabres game on the current day. Takes input today in the date format
-# YYYY-MM-DD. Called once per day.
-def checkForGame(today):
-    # Collects all games from the NHL api and formats into .json format
-    CHECKGAME_URL = f"https://statsapi.web.nhl.com/api/v1/schedule?date={today}"
-    CHECKGAME_response = requests.get(CHECKGAME_URL).json()
+def checkForGame(url):
+    CHECKGAME_response = requests.get(url).json()
 
     # Finds the timezone of the current user. Tested in eastern time on Windows, macOS, and Ubuntu. Only supports US
     # timezones at present
     timeZone = time.tzname
-    timeZoneOffset = {'EST': -4, 'Eastern Standard Time': -4, 'CST': -5, 'Central Standard Time': -5,
-                      'MST': -6, 'Mountain Standard Time': -6, 'PST': -7, 'Pacific Standard Time': -7}
+    # timeZoneOffset = {'EST': -4, 'Eastern Standard Time': -4, 'CST': -5, 'Central Standard Time': -5,
+    #                   'MST': -6, 'Mountain Standard Time': -6, 'PST': -7, 'Pacific Standard Time': -7}
+    timeZoneOffset_daylightSavings = {'EST': -5, 'Eastern Standard Time': -5, 'CST': -6, 'Central Standard Time': -6,
+                      'MST': -7, 'Mountain Standard Time': -7, 'PST': -8, 'Pacific Standard Time': -8}
 
     # Gets all games on today
-    dates = CHECKGAME_response["dates"]
+    daysOfWeek = CHECKGAME_response["gameWeek"]
 
-    for date in dates:
-        # Get all the games that are happening today in the NHL and iterate through those games
-        games = date["games"]
-        for game in games:
-            awayTeamID = game["teams"]["away"]["team"]["id"]  # Gets the away team ID
-            homeTeamID = game["teams"]["home"]["team"]["id"]  # Gets the home team ID
+    for day in daysOfWeek:
+        if day['date'] == url[-10:]:
+            # Get all the games that are happening today in the NHL and iterate through those games
+            games = day["games"]
+            for game in games:
+                awayTeamID = game['awayTeam']['id']  # Gets the away team ID
+                homeTeamID = game['homeTeam']['id']  # Gets the home team ID
 
-            # Checks if the Sabres are involved with the game and assigns if they are home or away
-            if awayTeamID == SABRES_TEAM_ID or homeTeamID == SABRES_TEAM_ID:
-                if awayTeamID == SABRES_TEAM_ID:
-                    SabresHomeOrAway = "away"
-                    OpHomeOrAway = "home"
-                else:
-                    SabresHomeOrAway = "home"
-                    OpHomeOrAway = "away"
+                # Checks if the Sabres are involved with the game and assigns if they are home or away
+                if awayTeamID == SABRES_TEAM_ID or homeTeamID == SABRES_TEAM_ID:
+                    if awayTeamID == SABRES_TEAM_ID:
+                        SabresHomeOrAway = "awayTeam"
+                        OpHomeOrAway = "homeTeam"
+                    else:
+                        SabresHomeOrAway = "homeTeam"
+                        OpHomeOrAway = "awayTeam"
 
-                # Determine the start time of the game in local time
-                gameTimeLocal = datetime.datetime.fromisoformat(game["gameDate"][:-1]) \
-                                + datetime.timedelta(hours=timeZoneOffset[timeZone[0]])
+                    # Determine the start time of the game in local time
+                    gameTimeLocal = datetime.datetime.fromisoformat(game["startTimeUTC"][:-1]) \
+                                    + datetime.timedelta(hours=timeZoneOffset_daylightSavings[timeZone[0]])
 
-                # if the Sabres are involved in a game today then the data for the game is returned
-                return game["gamePk"], SabresHomeOrAway, OpHomeOrAway, gameTimeLocal
+                    # if the Sabres are involved in a game today then the data for the game is returned
+                    return game["id"], SabresHomeOrAway, OpHomeOrAway, gameTimeLocal
     # Return default values if Sabres are not involved in the game
     return ['-1', -1, -1, '-1']
 
@@ -62,32 +61,66 @@ def checkForGame(today):
 def startGameUpdate(gameTimeLocal, opName):
     # Determine how long until the game starts and then prints some information about the game.
     tD = (gameTimeLocal - datetime.datetime.now())
-    print('The game today is between your Buffalo Sabres and the ' + str(opName) + '. It starts at ' +
+    print('The game today is between the Sabres and the ' + str(opName) + '. It starts at ' +
           str(gameTimeLocal.strftime("%H:%M:%S")) + ' local time')
     # If the start time of the game has not passed, wait until 200 seconds before it starts.
     if datetime.datetime.now() < gameTimeLocal:
-        print("True")
-        time.sleep(abs(tD.seconds - 200))
+        time.sleep(tD.seconds - 200)
 
 
 # Function that does most of the updating throughout the game, checks if the Sabres or their opponent has scored a goal
-def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url):
+def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url, Rosters):
     # Private function of duringGameUpdate that plays the goal song of the Sabres' goal scorer. Takes the live data of
     # the currently active game.
     def playGoalSong(goalData_priv):
+        eventType = 'notGoal'
+        i = -1
+        while not eventType == 'goal':
+            eventType = goalData_priv[i]['typeDescKey']
+            i = i-1
+        print(i)
         # Gets the latest goal scoring event of the current game and the goal scorer's name.
-        goalEventNumber = goalData_priv["scoringPlays"][-1]
-        playerName = goalData_priv["allPlays"][goalEventNumber]["players"][0]["player"]["fullName"]
+        scorerID = goalData_priv[i+1]['details']['scoringPlayerId']
+
+        if 'assist1PlayerId' in goalData_priv[i+1]['details']:
+            assist1ID = goalData_priv[i+1]['details']['assist1PlayerId']
+        else:
+            assist1ID = -1
+
+        if 'assist2PlayerId' in goalData_priv[i + 1]['details']:
+            assist2ID = goalData_priv[i + 1]['details']['assist2PlayerId']
+        else:
+            assist2ID = -1
+
+        for player in Rosters:
+            if player['playerId'] == scorerID:
+                scorerName = player['firstName']['default'] + ' ' + player['lastName']['default']
+                scorerNumber = player['sweaterNumber']
+            if not assist1ID == -1:
+                if player['playerId'] == assist1ID:
+                    assist1Name = player['firstName']['default'] + ' ' + player['lastName']['default']
+                    assist1Number = player['sweaterNumber']
+                elif not assist2ID == -1 and player['playerID'] == assist2ID:
+                    assist2Name = player['firstName']['default'] + ' ' + player['lastName']['default']
+                    assist2Number = player['sweaterNumber']
 
         # If the player has a known goal song we play that song otherwise we play the old Sabres' goal song "Let Me
         # Clear My Throat" -DJ Kool.
-        if playerName in sabresGoalSong:
-            goalSong = sabresGoalSong[playerName]
+        if scorerName in sabresGoalSong:
+            goalSong = sabresGoalSong[scorerName]
         else:
             goalSong = sabresGoalSong["default"]
 
         # Prints the description of the goal to the screen.
-        print(goalData_priv["allPlays"][goalEventNumber]["result"]["description"])
+        printStatement = 'Buffalo Sabres Score! Scored by number ' + str(scorerNumber) + ', ' + scorerName + '.'
+
+        if not assist1ID == -1 and not assist2ID == -1:
+            printStatement = printStatement + ' Assists to number ' + str(assist1Number) + ', ' + assist1Name + \
+                             ', and number ' + str(assist2Number) + ', ' + assist2Name + '. '
+        elif not assist1ID == -1:
+            printStatement = printStatement + ' Assists to number ' + str(assist1Number) + ', ' + assist1Name + '.'
+
+        print(printStatement)
 
         # Plays the song for twenty seconds and then stops it.
         pygame.mixer.music.load(goalSong)
@@ -97,29 +130,28 @@ def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url):
 
     # Gets the current score of the game for both of the teams in the game.
     LIVEGAME_response = requests.get(LiveGame_url).json()
-    # print(LIVEGAME_response["gameData"]["status"]["detailedState"])
-    sabres_score = LIVEGAME_response["liveData"]["linescore"]["teams"][SabresHomeOrAway]["goals"]
-    opScore = LIVEGAME_response["liveData"]["linescore"]["teams"][OpHomeOrAway]["goals"]
+    sabres_score = LIVEGAME_response[SabresHomeOrAway]['Score']
+    opScore = LIVEGAME_response[OpHomeOrAway]['Score']
 
     # Sleeps for 10 seconds. The NHL api game gets mad if you do it more often.
     time.sleep(10)
 
     # Gets the new score of the game after waiting eleven seconds.
-    LIVEGAME_response = requests.get(url).json()
-    newSabresScore = LIVEGAME_response["liveData"]["linescore"]["teams"][SabresHomeOrAway]["goals"]
-    newOpScore = LIVEGAME_response["liveData"]["linescore"]["teams"][OpHomeOrAway]["goals"]
-
-    # Checks if the game has ended.
-    gameOver = LIVEGAME_response["gameData"]["status"]["detailedState"] == "Final"
+    LIVEGAME_response = requests.get(LiveGame_url).json()
+    newSabresScore = LIVEGAME_response[SabresHomeOrAway]['Score']
+    newOpScore = LIVEGAME_response[OpHomeOrAway]['Score']
 
     # Checks if the Sabres had scored.
     sabreScoreBool = sabres_score < newSabresScore
     opScoreBool = opScore < newOpScore
 
+    # Checks if the game has ended.
+    gameOver = LIVEGAME_response['gameState'] == "Off"
+
     # If the Sabres scored call the playing music function.
     if sabreScoreBool:
-        LIVEGAME_response = requests.get(url).json()
-        goalData = LIVEGAME_response["liveData"]["plays"]
+        LIVEGAME_response = requests.get(LiveGame_url).json()
+        goalData = LIVEGAME_response["plays"]
         playGoalSong(goalData)
 
     if opScoreBool:
@@ -133,14 +165,9 @@ def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url):
     return sabreScoreBool, opScore < newOpScore, newSabresScore, newOpScore, gameOver
 
 
-# Function that prints some extra information to the screen. Created this to clean up main.
 def printScoreUpdate(opTeamAbbreviation, opTeamName, opTeamScore, sabresScoreTotal, bufScore, isFinal):
-    # Print if Bufflo has scored
-    if bufScore:
-        print("Buffalo Sabres score! The score of the game is now BUF: " + str(sabresScoreTotal) + " " +
-              opTeamAbbreviation + ": " + str(opTeamScore))
     # Print if the game is over
-    elif isFinal:
+    if isFinal:
         print("The game is over. The final score was BUF: " + str(sabresScoreTotal) + " " +
               opTeamAbbreviation + ": " + str(opTeamScore))
     # Print if the opponent has scored
@@ -151,44 +178,36 @@ def printScoreUpdate(opTeamAbbreviation, opTeamName, opTeamScore, sabresScoreTot
 
 # Main code loop
 while True:
-    # Get today's date and determine what time we should check tomorrow
+    baseAPIURL = 'https://api-web.nhle.com/'
+
     FullDateToday = datetime.datetime.now()
     today_date = FullDateToday.strftime("%Y-%m-%d")
     next_date = FullDateToday + datetime.timedelta(days=1)
     next_date = next_date.replace(hour=4, minute=0, second=0, microsecond=0)
 
-    # Call check for game function and returns the gameID (GID), whether the Sabres (SHOA) and their opponent (OHOA)
-    # are home or away and game time
-    [GID, SHOA, OHOA, GT] = checkForGame(today_date)
+    [GID, SHOA, OHOA, GT] = checkForGame(baseAPIURL + f'v1/schedule/{today_date}')
 
     # If there is a Sabres game today do the code
     if not GID == '-1':
         # Get the data for the game opponent abbreviation and name
-        url = f"https://statsapi.web.nhl.com/api/v1/game/{GID}/feed/live"
+        url = f"https://api-web.nhle.com/v1/gamecenter/{GID}/play-by-play"
         response = requests.get(url).json()
-        oppAbbreviation = response["gameData"]["teams"][OHOA]["abbreviation"]
-        oppName = response["gameData"]["teams"][OHOA]["name"]
+        oppAbbreviation = response[OHOA]["abbrev"]
+        oppName = response[OHOA]["name"]['default']
+
+        rosters = response['rosterSpots']
 
         # Call start game function
         startGameUpdate(GT, oppName)
 
-        # Play Sabres Theme (well...the old school one anyway)
-        pygame.mixer.music.load('./audioFiles/SabreDance.mp3')
-        pygame.mixer.music.play()
-        time.sleep(20)
-        pygame.mixer.music.stop()
-
-        # print(GID)
-        # Call the during game update function to initialize each of the return variables for the main loop
-        [didSabresScore, didOppScore, sabresScore, OpScore, isOver] = duringGameUpdate(SHOA, OHOA, url)
+        [didSabresScore, didOppScore, sabresScore, OpScore, isOver] = duringGameUpdate(SHOA, OHOA, url, rosters)
 
         # Print the score - if we start the program after the game has started this is a current update
         print("The score of the game is now BUF: " + str(sabresScore) + " " +
               oppAbbreviation + ": " + str(OpScore))
 
-        # Loops until the game is over, calling the game update function and printer function
         while not isOver:
-            [didSabresScore, didOppScore, sabresScore, OpScore, isOver] = duringGameUpdate(SHOA, OHOA, url)
+            [didSabresScore, didOppScore, sabresScore, OpScore, isOver] = duringGameUpdate(SHOA, OHOA, url, rosters)
             if didSabresScore or didOppScore:
                 printScoreUpdate(oppAbbreviation, oppName, OpScore, sabresScore, didSabresScore, isOver)
 

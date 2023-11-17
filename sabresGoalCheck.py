@@ -177,8 +177,8 @@ def printScoreUpdate(opTeamAbbreviation, opTeamName, opTeamScore, sabresScoreTot
 
 
 # Main code loop
+baseAPIURL = 'https://api-web.nhle.com/'
 while True:
-    baseAPIURL = 'https://api-web.nhle.com/'
 
     FullDateToday = datetime.datetime.now()
     today_date = FullDateToday.strftime("%Y-%m-%d")

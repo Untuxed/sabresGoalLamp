@@ -114,7 +114,7 @@ def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url, Rosters):
         # Prints the description of the goal to the screen.
         printStatement = 'Buffalo Sabres Score! Scored by number ' + str(scorerNumber) + ', ' + scorerName + '.'
 
-        if not assist1ID == -1 and not assist2ID == -1:
+        if not assist2ID == -1:
             printStatement = printStatement + ' Assists to number ' + str(assist1Number) + ', ' + assist1Name + \
                              ', and number ' + str(assist2Number) + ', ' + assist2Name + '. '
         elif not assist1ID == -1:

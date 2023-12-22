@@ -2,7 +2,7 @@ import requests
 import datetime
 import time
 import json
-import pygame
+import playsound
 
 # Setting of the global variables. Potentially in the future this can be updated to be usable for all teams
 global SABRES_TEAM_ID
@@ -12,8 +12,6 @@ global sabresGoalSong
 # acquisitions. Also initializes pygame and the pygame mixer which is used to play the goal music
 sabresGoalSong = json.loads(open('./audioFiles/SabresGoalSongs.json', "r").read())
 SABRES_TEAM_ID = 7
-pygame.init()
-pygame.mixer.init()
 
 
 def checkForGame(url):
@@ -66,6 +64,7 @@ def startGameUpdate(gameTimeLocal, opName):
     # If the start time of the game has not passed, wait until 200 seconds before it starts.
     if datetime.datetime.now() < gameTimeLocal:
         time.sleep(tD.seconds - 200)
+        playsound.playsound('./audioFiles/SabreDance.mp3')
 
 
 # Function that does most of the updating throughout the game, checks if the Sabres or their opponent has scored a goal
@@ -73,12 +72,17 @@ def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url, Rosters):
     # Private function of duringGameUpdate that plays the goal song of the Sabres' goal scorer. Takes the live data of
     # the currently active game.
     def playGoalSong(goalData_priv):
-        eventType = 'notGoal'
         i = -1
+        eventType = goalData_priv[i]['typeDescKey']
+        print(eventType)
         while not eventType == 'goal':
             eventType = goalData_priv[i]['typeDescKey']
             i = i-1
+
         print(i)
+        if i == -1:
+            i = -2
+
         # Gets the latest goal scoring event of the current game and the goal scorer's name.
         scorerID = goalData_priv[i+1]['details']['scoringPlayerId']
 
@@ -100,7 +104,8 @@ def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url, Rosters):
                 if player['playerId'] == assist1ID:
                     assist1Name = player['firstName']['default'] + ' ' + player['lastName']['default']
                     assist1Number = player['sweaterNumber']
-                elif not assist2ID == -1 and player['playerID'] == assist2ID:
+            if not assist2ID == -1:
+                if player['playerId'] == assist2ID:
                     assist2Name = player['firstName']['default'] + ' ' + player['lastName']['default']
                     assist2Number = player['sweaterNumber']
 
@@ -123,42 +128,45 @@ def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url, Rosters):
         print(printStatement)
 
         # Plays the song for twenty seconds and then stops it.
-        pygame.mixer.music.load(goalSong)
-        pygame.mixer.music.play()
+        playsound.playsound(goalSong)
         time.sleep(20)
-        pygame.mixer.music.stop()
 
     # Gets the current score of the game for both of the teams in the game.
     LIVEGAME_response = requests.get(LiveGame_url).json()
-    sabres_score = LIVEGAME_response[SabresHomeOrAway]['Score']
-    opScore = LIVEGAME_response[OpHomeOrAway]['Score']
+    sabres_score = LIVEGAME_response[SabresHomeOrAway]['score']
+    opScore = LIVEGAME_response[OpHomeOrAway]['score']
+    numPlays = len(LIVEGAME_response['plays'])
 
     # Sleeps for 10 seconds. The NHL api game gets mad if you do it more often.
     time.sleep(10)
 
     # Gets the new score of the game after waiting eleven seconds.
     LIVEGAME_response = requests.get(LiveGame_url).json()
-    newSabresScore = LIVEGAME_response[SabresHomeOrAway]['Score']
-    newOpScore = LIVEGAME_response[OpHomeOrAway]['Score']
+    newSabresScore = LIVEGAME_response[SabresHomeOrAway]['score']
+    newOpScore = LIVEGAME_response[OpHomeOrAway]['score']
+    newNumPlays = len(LIVEGAME_response['plays'])
 
     # Checks if the Sabres had scored.
     sabreScoreBool = sabres_score < newSabresScore
     opScoreBool = opScore < newOpScore
+    playsBool = numPlays < newNumPlays
 
     # Checks if the game has ended.
-    gameOver = LIVEGAME_response['gameState'] == "Off"
+    gameOver = LIVEGAME_response['gameState'] == "FINAL"
 
     # If the Sabres scored call the playing music function.
     if sabreScoreBool:
+        time.sleep(1)
         LIVEGAME_response = requests.get(LiveGame_url).json()
         goalData = LIVEGAME_response["plays"]
+        print(goalData[-1]['typeDescKey'])
         playGoalSong(goalData)
 
     if opScoreBool:
-        pygame.mixer.music.load('./audioFiles/losing_horn.mp3')
-        pygame.mixer.music.play()
-        time.sleep(5)
-        pygame.mixer.music.stop()
+        playsound.playsound('./audioFiles/losing_horn.mp3')
+
+    if playsBool:
+        print(newNumPlays)
 
     # Returns the if the Sabres or Opponent scored, the current Sabres' score, their Opponents' score, whether if
     # the game is over.

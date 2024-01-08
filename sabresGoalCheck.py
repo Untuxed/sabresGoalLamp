@@ -63,23 +63,25 @@ def startGameUpdate(gameTimeLocal, opName):
           str(gameTimeLocal.strftime("%H:%M:%S")) + ' local time')
     # If the start time of the game has not passed, wait until 200 seconds before it starts.
     if datetime.datetime.now() < gameTimeLocal:
-        time.sleep(tD.seconds - 200)
-        playsound.playsound('./audioFiles/SabreDance.mp3')
+        time.sleep(tD.seconds - 15)
 
 
 # Function that does most of the updating throughout the game, checks if the Sabres or their opponent has scored a goal
 def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url, Rosters):
     # Private function of duringGameUpdate that plays the goal song of the Sabres' goal scorer. Takes the live data of
     # the currently active game.
-    def playGoalSong(goalData_priv):
+    def playGoalSong(goalData_priv, URL):
         i = -1
         eventType = goalData_priv[i]['typeDescKey']
         print(eventType)
         while not eventType == 'goal':
             eventType = goalData_priv[i]['typeDescKey']
             i = i-1
+            print(i)
+            if i >= -5:
+                i = -1
+                goalData_priv = requests.get(URL).json()["plays"]
 
-        print(i)
         if i == -1:
             i = -2
 
@@ -160,7 +162,7 @@ def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url, Rosters):
         LIVEGAME_response = requests.get(LiveGame_url).json()
         goalData = LIVEGAME_response["plays"]
         print(goalData[-1]['typeDescKey'])
-        playGoalSong(goalData)
+        playGoalSong(goalData, LiveGame_url)
 
     if opScoreBool:
         playsound.playsound('./audioFiles/losing_horn.mp3')
@@ -207,6 +209,8 @@ while True:
 
         # Call start game function
         startGameUpdate(GT, oppName)
+
+        playsound.playsound('./audioFiles/SabreDance.mp3')
 
         [didSabresScore, didOppScore, sabresScore, OpScore, isOver] = duringGameUpdate(SHOA, OHOA, url, rosters)
 

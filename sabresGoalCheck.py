@@ -68,15 +68,39 @@ def main(page: ft.Page):
         return ['-1', -1, -1, '-1']
 
     # Function that pauses the code until the game starts.
-    def startGameUpdate(gameTimeLocal, opName):
+    def startGameUpdate(gameTimeLocal, opName, gameURL):
         # Determine how long until the game starts and then prints some information about the game.
         tD = (gameTimeLocal - datetime.datetime.now())
         print('The game today is between the Sabres and the ' + str(opName) + '. It starts at ' +
               str(gameTimeLocal.strftime("%H:%M:%S")) + ' local time')
         # If the start time of the game has not passed, wait until 200 seconds before it starts.
-        if datetime.datetime.now() < gameTimeLocal:
-            time.sleep(tD.seconds - 15)
-            playsound.playsound('./audioFiles/SabreDance.mp3')
+        # if datetime.datetime.now() < gameTimeLocal:
+        #     time.sleep(tD.seconds - 15)
+        #     playsound.playsound('./audioFiles/SabreDance.mp3')
+        #     return -1, -1
+        # else:
+        events = requests.get(gameURL).json()['plays']
+        scorerNumber = -1
+        sabresShots = []
+        sabresGoals = []
+
+        if events:
+            for event in events:
+                if event['typeDescKey'] == 'shot-on-goal':
+                    data = event['details']
+                    if data['eventOwnerTeamId'] == 7:
+                        sabresShots.append(np.array([data['xCoord'], data['yCoord']]))
+                elif event['typeDescKey'] == 'goal':
+                    data = event['details']
+                    if data['eventOwnerTeamId'] == 7:
+                        for player in rosters:
+                            if data['scoringPlayerId'] == player['playerId']:
+                                scorerNumber = player['sweaterNumber']
+                        sabresGoals.append(np.array([data['xCoord'], data['yCoord'], scorerNumber, event['sortOrder']]))
+
+        sabresShots = pd.DataFrame(sabresShots, columns=['x', 'y'])
+        sabresGoals = pd.DataFrame(sabresGoals, columns=['x', 'y', 'SN', 'EN'])
+        return sabresShots, sabresGoals
 
     # Function that does most of the updating throughout the game, checks if the Sabres or their opponent has scored
     # a goal
@@ -180,13 +204,12 @@ def main(page: ft.Page):
             if opScoreBool:
                 playsound.playsound('./audioFiles/losing_horn.mp3')
             i = numPlays
-            print(i, newNumPlays)
             while i < newNumPlays:
                 i += 1
                 event = LIVEGAME_response['plays'][i - 1]
                 print(event['typeDescKey'])
                 if event['typeDescKey'] == 'shot-on-goal' and event['details']['eventOwnerTeamId'] == SABRES_TEAM_ID:
-                    sabresShot.append(np.array([event['details']['xCoord'], event['details']['yCoord']]))
+                    sabresShot.append(np.array([event['details']['xCoord'], event['details']['yCoord'], event['sortOrder']]))
 
         # Returns the if the Sabres or Opponent scored, the current Sabres' score, their Opponents' score, whether if
         # the game is over.
@@ -229,7 +252,7 @@ def main(page: ft.Page):
     # Main code loop
     baseAPIURL = 'https://api-web.nhle.com/'
     while True:
-        FullDateToday = datetime.datetime.now()
+        FullDateToday = datetime.datetime.now() - datetime.timedelta(days=1)
         today_date = FullDateToday.strftime("%Y-%m-%d")
         next_date = FullDateToday + datetime.timedelta(days=1)
         next_date = next_date.replace(hour=4, minute=0, second=0, microsecond=0)
@@ -246,11 +269,11 @@ def main(page: ft.Page):
 
             rosters = response['rosterSpots']
 
-            # Call start game function
-            startGameUpdate(GT, oppName)
-
             sabresGoals = pd.DataFrame(columns=['x', 'y', 'SN', 'EN'])
             sabresShots = pd.DataFrame(columns=['x', 'y', 'EN'])
+
+            # Call start game function
+            [sabresShots, sabresGoals] = startGameUpdate(GT, oppName, url)
 
             if not headless:
                 plotter(0)

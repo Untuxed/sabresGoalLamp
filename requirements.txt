@@ -1,3 +1,10 @@
 requests
 datetime
 playsound
+pandas
+pyObjC
+Pyarrow
+matplotlib
+flet
+numpy
+hockey-rink

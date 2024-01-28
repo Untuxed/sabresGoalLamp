@@ -10,6 +10,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import flet as ft
 from flet.matplotlib_chart import MatplotlibChart
+import sys
 
 matplotlib.use('agg')
 
@@ -284,7 +285,27 @@ def main(page: ft.Page):
         time.sleep((next_date - datetime.datetime.now()).seconds)
 
 
-headless = False
+def argumentHandling(arg, args):
+    try:
+        index = args.index(arg)
+        if index + 1 < len(args):
+            return args[index + 1]
+    except ValueError:
+        pass
+    return None
+
+
+args = sys.argv[1:]
+if '-h' in args:
+    value = argumentHandling('-h', args)
+
+    if eval(value):
+        headless = True
+    else:
+        headless = False
+else:
+    headless = True
+
 if not headless:
     ft.app(target=main)
 else:

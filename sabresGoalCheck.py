@@ -378,7 +378,7 @@ def main(page: ft.Page):
     # Main code loop
     baseAPIURL = 'https://api-web.nhle.com/'
     while True:
-        FullDateToday = datetime.datetime.now() - datetime.timedelta(days=1)
+        FullDateToday = datetime.datetime.now()
         today_date = FullDateToday.strftime("%Y-%m-%d")
         next_date = FullDateToday + datetime.timedelta(days=1)
         next_date = next_date.replace(hour=4, minute=0, second=0, microsecond=0)

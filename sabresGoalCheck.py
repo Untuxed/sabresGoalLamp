@@ -375,10 +375,13 @@ def main(page: ft.Page):
         rink.text("x", "y", s="SN", ax=axs, ha="center", va="center", fontsize=14, data=sabresGoals, c='#FFFFFF')
         page.add(MatplotlibChart(fig, expand=True))
 
+    if not headless:
+        page.title = "Sabres Goal Lamp - GUI"
+
     # Main code loop
     baseAPIURL = 'https://api-web.nhle.com/'
     while True:
-        FullDateToday = datetime.datetime.now()
+        FullDateToday = datetime.datetime.now() - datetime.timedelta(days=1)
         today_date = FullDateToday.strftime("%Y-%m-%d")
         next_date = FullDateToday + datetime.timedelta(days=1)
         next_date = next_date.replace(hour=4, minute=0, second=0, microsecond=0)
@@ -458,7 +461,7 @@ else:
 
 # Check if headless mode is disabled
 if not headless:
-    # Launch the Fanteam app with the main function as the target for visualization
+    # Launch the flet app with the main function as the target for visualization
     ft.app(target=main)
 else:
     # Run the main function without visualization if headless mode is enabled

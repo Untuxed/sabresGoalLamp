@@ -356,10 +356,10 @@ def main(page: ft.Page):
             print('init')
             fig, axs = plt.subplots(1, 1)
         elif plotStatus == 1:
-            plt.close()
+            plt.cla()
             print("tried to update shots")
         else:
-            plt.close()
+            plt.cla()
             print("tried to update goals")
         rink = NHLRink(
             sabresLogo={
@@ -373,15 +373,18 @@ def main(page: ft.Page):
         rink.scatter('x', 'y', data=sabresShots, ax=axs, marker='X', c='#003087')
         rink.scatter("x", "y", ax=axs, facecolor="#003087", edgecolor="black", s=300, data=sabresGoals)
         rink.text("x", "y", s="SN", ax=axs, ha="center", va="center", fontsize=14, data=sabresGoals, c='#FFFFFF')
-        page.add(MatplotlibChart(fig, expand=True))
-
-    if not headless:
         page.title = "Sabres Goal Lamp - GUI"
+        if webUI:
+            plt.savefig('./rink.jpg', bbox_inches='tight')
+            img = ft.Image(src='rink.jpg')
+            page.add(img)
+        else:
+            page.add(MatplotlibChart(fig))
 
     # Main code loop
     baseAPIURL = 'https://api-web.nhle.com/'
     while True:
-        FullDateToday = datetime.datetime.now()
+        FullDateToday = datetime.datetime.now() - datetime.timedelta(days=4)
         today_date = FullDateToday.strftime("%Y-%m-%d")
         next_date = FullDateToday + datetime.timedelta(days=1)
         next_date = next_date.replace(hour=4, minute=0, second=0, microsecond=0)
@@ -424,14 +427,16 @@ def main(page: ft.Page):
                     sabresShots = pd.concat([sabresShots, pd.DataFrame(shots, columns=['x', 'y'])], ignore_index=True)
                     plotter(1)
 
-                # Plots if the sabres scored
+                # Prints to the screen if the sabres scored. If the GUI is active plot to the screen.
                 if didSabresScore:
                     printScoreUpdate(oppAbbreviation, oppName, OpScore, sabresScore, didSabresScore, isOver)
                     if sabresGoal['SN'] != -1:
                         sabresGoals = pd.concat([sabresGoals, pd.DataFrame([sabresGoal])], ignore_index=True)
                     if not headless:
                         plotter(2)
-                elif didOppScore:
+
+                # Print score if the opponent has scored.
+                if didOppScore:
                     printScoreUpdate(oppAbbreviation, oppName, OpScore, sabresScore, didSabresScore, isOver)
 
             # Calls print function one last time
@@ -459,10 +464,23 @@ else:
     # If the '-h' flag is not present, set headless to True by default
     headless = True
 
+if '-w' in args:
+    value = argumentHandling('-w', args)
+
+    if eval(value):
+        webUI = True
+    else:
+        webUI = False
+else:
+    webUI = False
+
 # Check if headless mode is disabled
 if not headless:
-    # Launch the flet app with the main function as the target for visualization
-    ft.app(target=main)
+    if webUI:
+        # Launch the flet app with the main function as the target for visualization
+        ft.app(target=main, assets_dir='./', view=ft.AppView.WEB_BROWSER)
+    else:
+        ft.app(target=main)
 else:
     # Run the main function without visualization if headless mode is enabled
     main(-1)

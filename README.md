@@ -16,14 +16,25 @@ pip install -r requirements.txt
 
 ## Usage
 
-1. Clone this repository or download the `sabres_game_tracker.py` file.
+1. Clone this repository or download the `sabresGoalCheck.py` file.
 
-2a. Manually run the script using the following command:
+2a. Manually run the script using the following command to start the goal tracker by itself, no GUI:
 
 ```bash
-python sabres_game_tracker.py
+python sabresGoalCheck.py
 ```
-2b. Automatically run the script (if it is in your documents folder) by running "SabreLamp.command."
+
+There are now optional flags for starting a flet GUI, (-h and -w).
+  -h (headless, default True) controls if the GUI is created. -h False creates a GUI element.
+  -w (webApp, default False) controls if the GUI is a webApp. Eventually this project will transition to a webApp permanently, for now setting this flag to True will give a sneak peak to the webApp. 
+
+Example for starting a local GUI:
+
+```bash
+python sabresGoalCheck.py -h False -w False
+```
+
+2b. Automatically run the script (if it is in your documents folder) by running "SabreLamp.command." This command just plays goal sounds.
 
 ## How It Works
 
@@ -43,13 +54,11 @@ The script works by:
 
 ## Important Notes
 
-- The script assumes that the Sabres are in the Eastern Time Zone (ET) and calculates game start times accordingly. It may need adjustments for other time zones.
+- The script assumes that the user is in the Eastern Time Zone (ET) and calculates game start times accordingly. It may need adjustments for other time zones.
 
 - Ensure that your audio files (goal songs) are in the correct format and their paths are correctly specified in the `SabresGoalSongs.json` file.
 
 - The `audioFiles` folder should be included when you clone the GitHub repository.
-
-- The script uses the NHL API, which may have rate limits and may require an API key for extensive use.
 
 - This script provides basic functionality and can be expanded upon for further customization or integration into other applications.
 
@@ -57,4 +66,4 @@ The script works by:
 
 This script is provided under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
-Feel free to contribute to this project or customize it to meet your specific needs. Enjoy tracking Buffalo Sabres games with their goal songs!
+Feel free to contribute to this project or customize it to meet your specific needs.

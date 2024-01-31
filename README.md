@@ -25,7 +25,9 @@ python sabresGoalCheck.py
 ```
 
 There are now optional flags for starting a flet GUI, (-h and -w).
+
   -h (headless, default True) controls if the GUI is created. -h False creates a GUI element.
+  
   -w (webApp, default False) controls if the GUI is a webApp. Eventually this project will transition to a webApp permanently, for now setting this flag to True will give a sneak peak to the webApp. 
 
 Example for starting a local GUI:

@@ -9,14 +9,9 @@ from hockey_rink import NHLRink, RinkImage
 import matplotlib
 import matplotlib.pyplot as plt
 import flet as ft
-from flet.matplotlib_chart import MatplotlibChart
 import sys
 
 matplotlib.use('agg')
-
-# Setting of the global variables. Potentially in the future this can be updated to be usable for all teams
-global SABRES_TEAM_ID
-global sabresGoalSong
 
 # opens the sabresGoalSong file that points to each player's music file. Not fully up to date with the deadline
 # acquisitions. Also initializes pygame and the pygame mixer which is used to play the goal music
@@ -76,25 +71,25 @@ def checkForGame(url):
 # has already started.
 def startGameUpdate(gameTimeLocal, opName, gameURL, gameRosters):
     """
-        Determine how long until the game starts and print information about the game.
+    Determine how long until the game starts and print information about the game.
 
-        Parameters:
-        - gameTimeLocal (datetime): The local start time of the game.
-        - opName (str): The name of the opposing team.
-        - gameURL (str): The URL to fetch game events data.
-        - gameRosters (list): List of player rosters with information like playerId, sweaterNumber, etc.
+    Parameters:
+    - gameTimeLocal (datetime): The local start time of the game.
+    - opName (str): The name of the opposing team.
+    - gameURL (str): The URL to fetch game events data.
+    - gameRosters (list): List of player rosters with information like playerId, sweaterNumber, etc.
 
-        Returns:
-        Tuple (pd.DataFrame, pd.DataFrame): A tuple containing two Pandas DataFrames:
-            1. sabresShots: DataFrame with columns 'x' and 'y' representing Sabres' shots on goal coordinates.
-            2. sabresGoals: DataFrame with columns 'x', 'y', 'SN' (sweater number), and 'EN' (event order),
-               representing Sabres' goals coordinates and scorer information.
+    Returns:
+    Tuple (pd.DataFrame, pd.DataFrame): A tuple containing two Pandas DataFrames:
+        1. sabresShots: DataFrame with columns 'x' and 'y' representing Sabres' shots on goal coordinates.
+        2. sabresGoals: DataFrame with columns 'x', 'y', 'SN' (sweater number), and 'EN' (event order),
+           representing Sabres' goals coordinates and scorer information.
 
-        Note:
-        The function uses the gameTimeLocal to calculate the time remaining until the game starts,
-        fetches game events using the provided URL, and extracts relevant information about Sabres' shots
-        and goals. The information is returned as Pandas DataFrames.
-        """
+    Note:
+    The function uses the gameTimeLocal to calculate the time remaining until the game starts,
+    fetches game events using the provided URL, and extracts relevant information about Sabres' shots
+    and goals. The information is returned as Pandas DataFrames.
+    """
 
     # Determine how long until the game starts and then prints some information about the game.
     tD = (gameTimeLocal - datetime.datetime.now())
@@ -132,7 +127,7 @@ def startGameUpdate(gameTimeLocal, opName, gameURL, gameRosters):
 
 # Function that does most of the updating throughout the game, checks if the Sabres or their opponent has scored
 # a goal
-def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url, Rosters):
+def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url, Rosters, sleepTime):
     """
     Update function for ongoing hockey games, checking if the Sabres or their opponent scored a goal.
 
@@ -141,6 +136,7 @@ def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url, Rosters):
     - OpHomeOrAway (str): Indicates whether the opponent is playing at home or away ('home' or 'away').
     - LiveGame_url (str): The URL to fetch live game data.
     - Rosters (list): List of player rosters with information like playerId, sweaterNumber, etc.
+    - sleepTime (int): The amount of time that the app should wait between polling
 
     Returns:
     Tuple (bool, bool, int, int, bool, dict, list): A tuple containing the following information:
@@ -161,26 +157,27 @@ def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url, Rosters):
     If Sabres or the opponent scores, it prints information about the goal and plays the corresponding goal song.
     The function returns relevant information about the game status.
     """
+
     def playGoalSong(goalData_priv, URL):
         """
-            Play the goal song associated with the latest goal-scoring event in a hockey game and print goal information.
+        Play the goal song associated with the latest goal-scoring event in a hockey game and print goal information.
 
-            Parameters:
-            - goalData_priv (list): List of goal-scoring events data for the current game.
-            - URL (str): The URL to fetch the latest game events data.
+        Parameters:
+        - goalData_priv (list): List of goal-scoring events data for the current game.
+        - URL (str): The URL to fetch the latest game events data.
 
-            Returns:
-            dict: Dictionary containing information about the latest goal event with keys:
-                - 'x': x-coordinate of the goal.
-                - 'y': y-coordinate of the goal.
-                - 'SN': Sweater number of the goal scorer.
-                - 'EN': Event order of the goal.
+        Returns:
+        dict: Dictionary containing information about the latest goal event with keys:
+            - 'x': x-coordinate of the goal.
+            - 'y': y-coordinate of the goal.
+            - 'SN': Sweater number of the goal scorer.
+            - 'EN': Event order of the goal.
 
-            Note:
-            The function uses the provided goal data and URL to fetch the latest goal-scoring event information.
-            It extracts details about the scorer, assists, and plays the corresponding goal song. The goal information
-            is then printed to the screen.
-            """
+        Note:
+        The function uses the provided goal data and URL to fetch the latest goal-scoring event information.
+        It extracts details about the scorer, assists, and plays the corresponding goal song. The goal information
+        is then printed to the screen.
+        """
         # Initialize variables and iterate to find the latest goal-scoring event
         i = -1
         eventType = goalData_priv[i]['typeDescKey']
@@ -246,7 +243,7 @@ def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url, Rosters):
     numPlays = len(LIVEGAME_response['plays'])
 
     # Sleeps for 10 seconds to avoid overloading the NHL API
-    time.sleep(10)
+    time.sleep(sleepTime)
 
     # Gets the new score after a brief delay
     LIVEGAME_response = requests.get(LiveGame_url).json()
@@ -301,7 +298,8 @@ def printScoreUpdate(opTeamAbbreviation, opTeamName, opTeamScore, sabresScoreTot
     if isFinal:
         print(f"The game is over. The final score was BUF: {sabresScoreTotal} {opTeamAbbreviation}: {opTeamScore}")
     elif not bufScore:
-        print(f"{opTeamName} scored. The score of the game is now BUF: {sabresScoreTotal} {opTeamAbbreviation}: {opTeamScore}")
+        print(
+            f"{opTeamName} scored. The score of the game is now BUF: {sabresScoreTotal} {opTeamAbbreviation}: {opTeamScore}")
 
 
 def argumentHandling(arg, args):
@@ -339,52 +337,120 @@ def main(page: ft.Page):
     It fetches live game data, plots shots and goals on a rink image, and displays live score updates.
     The loop runs until the game is over, and then it waits until the next day to resume checking for games.
     """
-    def plotter(plotStatus):
-        """
-                Plotting function to visualize shots and goals on a rink image.
 
-                Parameters:
-                - plot_status (int): Status flag for plotting operations:
-                    - 0: Initialize the plot.
-                    - 1: Update shots on the existing plot.
-                    - 2: Update goals on the existing plot.
+    def guiUpdate(plotStatus):
+        def plotter():
+            """
+            Plotting function to visualize shots and goals on a rink image.
 
-                Returns:
-                None
-        """
-        if plotStatus == 0:
-            print('init')
-            fig, axs = plt.subplots(1, 1)
-        elif plotStatus == 1:
-            plt.cla()
-            print("tried to update shots")
-        else:
-            plt.cla()
-            print("tried to update goals")
-        rink = NHLRink(
-            sabresLogo={
-                'feature_class': RinkImage,
-                'image_path': 'https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Buffalo_Sabres_Logo.svg/240px'
-                              '-Buffalo_Sabres_Logo.svg.png',
-                "x": 0, "length": 27, "width": 27,
-                "zorder": 15, "alpha": 0.5,
-            }
-        )
-        rink.scatter('x', 'y', data=sabresShots, ax=axs, marker='X', c='#003087')
-        rink.scatter("x", "y", ax=axs, facecolor="#003087", edgecolor="black", s=300, data=sabresGoals)
-        rink.text("x", "y", s="SN", ax=axs, ha="center", va="center", fontsize=14, data=sabresGoals, c='#FFFFFF')
-        page.title = "Sabres Goal Lamp - GUI"
-        if webUI:
+            Parameters:
+            - plot_status (int): Status flag for plotting operations:
+                - 0: Initialize the plot.
+                - 1: Update shots on the existing plot.
+                - 2: Update goals on the existing plot.
+
+            Returns:
+            None
+            """
+            if plotStatus == 0:
+                print('init')
+                fig, axs = plt.subplots(1, 1)
+                rink = NHLRink(
+                    sabresLogo={
+                        'feature_class': RinkImage,
+                        'image_path': 'https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Buffalo_Sabres_Logo.svg/240px'
+                                      '-Buffalo_Sabres_Logo.svg.png',
+                        "x": 0, "length": 27, "width": 27,
+                        "zorder": 15, "alpha": 0.5,
+                    }
+                )
+            elif plotStatus == 1:
+                plt.cla()
+                print("tried to update shots")
+            else:
+                plt.cla()
+                print("tried to update goals")
+
+            rink.scatter('x', 'y', data=sabresShots, ax=axs, marker='X', c='#003087')
+            rink.scatter("x", "y", ax=axs, facecolor="#003087", edgecolor="black", s=300, data=sabresGoals)
+            rink.text("x", "y", s="SN", ax=axs, ha="center", va="center", fontsize=14, data=sabresGoals, c='#FFFFFF')
             plt.savefig('./rink.jpg', bbox_inches='tight')
-            img = ft.Image(src='rink.jpg')
-            page.add(img)
-        else:
-            page.add(MatplotlibChart(fig))
 
+        def getGoalData():
+            scorers = []
+            for number in sabresGoals['SN']:
+                for player in rosters:
+                    if number == player['sweaterNumber']:
+                        statement = ft.Text(f'Number {number}, ' + player['firstName']['default'] + ' ' + \
+                                            player['lastName']['default'])
+                        scorers.append(statement)
+            return scorers
+
+        plotter()
+        getGoalData()
+        img = ft.Image(src='./rink.jpg')
+
+        gameScore = ft.Row(
+            controls=[
+                ft.Column(
+                    controls=[
+                        ft.Text('Sabres: ' + str(sabresScore), size=15, weight=ft.FontWeight.BOLD)
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    width=257
+                ),
+                ft.Column(
+                    controls=[
+                        ft.Text(oppName + ': ' + str(OpScore), size=15, weight=ft.FontWeight.BOLD)
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    width=257
+                )
+            ],
+            alignment=ft.MainAxisAlignment.START
+        )
+
+        rinkData = ft.Column(
+            controls=[
+                ft.Text('Rink Image', size=30, weight=ft.FontWeight.BOLD),
+                img,
+                gameScore
+            ],
+            height=page.height,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+        )
+
+        goalScorerData = ft.Column(
+            controls=getGoalData()
+        )
+
+        goalData = ft.Column(
+            controls=[
+                ft.Text('Goal Data', size=30, weight=ft.FontWeight.BOLD),
+                goalScorerData
+            ],
+            height=page.height,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+        )
+
+        mainPage = ft.Row(
+            controls=[
+                rinkData,
+                goalData
+            ],
+            width=page.width,
+            alignment=ft.MainAxisAlignment.SPACE_EVENLY
+        )
+
+        page.add(mainPage)
+        page.update()
+
+    page.title = "Sabres Goal Lamp - GUI"
     # Main code loop
     baseAPIURL = 'https://api-web.nhle.com/'
+
     while True:
-        FullDateToday = datetime.datetime.now()
+        FullDateToday = datetime.datetime.now() - datetime.timedelta(days=7)
         today_date = FullDateToday.strftime("%Y-%m-%d")
         next_date = FullDateToday + datetime.timedelta(days=1)
         next_date = next_date.replace(hour=4, minute=0, second=0, microsecond=0)
@@ -407,11 +473,11 @@ def main(page: ft.Page):
             # Call start game function
             [sabresShots, sabresGoals] = startGameUpdate(GT, oppName, url, rosters)
 
+            [_, _, sabresScore, OpScore, isOver, _, _] = duringGameUpdate(SHOA, OHOA, url, rosters, 0)
+
             # Calls the plotter function to initialize it if the user wants the GUI
             if not headless:
-                plotter(0)
-
-            [_, _, sabresScore, OpScore, isOver, _, _] = duringGameUpdate(SHOA, OHOA, url, rosters)
+                guiUpdate(0)
 
             # Print the score - if we start the program after the game has started this is a current update
             print("The score of the game is now BUF: " + str(sabresScore) + " " +
@@ -421,11 +487,11 @@ def main(page: ft.Page):
             while not isOver:
                 # Updates if the game is going on
                 [didSabresScore, didOppScore, sabresScore, OpScore, isOver, sabresGoal, shots] = \
-                    duringGameUpdate(SHOA, OHOA, url, rosters)
+                    duringGameUpdate(SHOA, OHOA, url, rosters, 10)
                 # Plots if there was a sabres shot on goal
                 if shots and not headless:
                     sabresShots = pd.concat([sabresShots, pd.DataFrame(shots, columns=['x', 'y'])], ignore_index=True)
-                    plotter(1)
+                    guiUpdate(1)
 
                 # Prints to the screen if the sabres scored. If the GUI is active plot to the screen.
                 if didSabresScore:
@@ -433,7 +499,7 @@ def main(page: ft.Page):
                     if sabresGoal['SN'] != -1:
                         sabresGoals = pd.concat([sabresGoals, pd.DataFrame([sabresGoal])], ignore_index=True)
                     if not headless:
-                        plotter(2)
+                        guiUpdate(2)
 
                 # Print score if the opponent has scored.
                 if didOppScore:
@@ -480,8 +546,7 @@ if not headless:
         # Launch the flet app with the main function as the target for visualization
         ft.app(target=main, assets_dir='./', view=ft.AppView.WEB_BROWSER)
     else:
-        ft.app(target=main)
+        ft.app(target=main, assets_dir='./')
 else:
     # Run the main function without visualization if headless mode is enabled
     main(-1)
-

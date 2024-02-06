@@ -450,10 +450,10 @@ def main(page: ft.Page):
 # Extract command-line arguments excluding the script name
 args = sys.argv[1:]
 
-# Check if the '-h' flag is present in the arguments
-if '-h' in args:
-    # Retrieve the value following the '-h' flag using the argumentHandling function
-    value = argumentHandling('-h', args)
+# Check if the '-g' flag is present in the arguments
+if '-g' in args:
+    # Retrieve the value following the '-g' flag using the argumentHandling function
+    value = argumentHandling('-g', args)
 
     # If the value is evaluated as True, set headless to True; otherwise, set it to False
     if eval(value):
@@ -461,7 +461,7 @@ if '-h' in args:
     else:
         headless = False
 else:
-    # If the '-h' flag is not present, set headless to True by default
+    # If the '-g' flag is not present, set headless to True by default
     headless = True
 
 if '-w' in args:

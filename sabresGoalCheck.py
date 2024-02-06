@@ -527,7 +527,7 @@ if '-g' in args:
     else:
         gui = False
 else:
-    # If the '-g' flag is not present, set gui to True by default
+    # If the '-h' flag is not present, set headless to True by default
     gui = False
 
 if '-w' in args:

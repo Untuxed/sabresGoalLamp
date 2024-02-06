@@ -24,16 +24,16 @@ pip install -r requirements.txt
 python sabresGoalCheck.py
 ```
 
-There are now optional flags for starting a flet GUI, (-h and -w).
+There are now optional flags for starting a flet GUI, (-g and -w).
 
-  -h (headless, default True) controls if the GUI is created. -h False creates a GUI element.
+  -g (gui, default False) controls if the GUI is created. -g True creates a GUI element.
   
   -w (webApp, default False) controls if the GUI is a webApp. Eventually this project will transition to a webApp permanently, for now setting this flag to True will give a sneak peak to the webApp. 
 
 Example for starting a local GUI:
 
 ```bash
-python sabresGoalCheck.py -h False -w False
+python sabresGoalCheck.py -g True -w False
 ```
 
 2b. Automatically run the script (if it is in your documents folder) by running "SabreLamp.command." This command just plays goal sounds.

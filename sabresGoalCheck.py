@@ -354,6 +354,7 @@ def main(page: ft.Page):
             """
             if plotStatus == 0:
                 print('init')
+                page.title = "Sabres Goal Lamp - GUI"
                 fig, axs = plt.subplots(1, 1)
                 rink = NHLRink(
                     sabresLogo={
@@ -445,7 +446,6 @@ def main(page: ft.Page):
         page.add(mainPage)
         page.update()
 
-    page.title = "Sabres Goal Lamp - GUI"
     # Main code loop
     baseAPIURL = 'https://api-web.nhle.com/'
 

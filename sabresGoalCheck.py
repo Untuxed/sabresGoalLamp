@@ -408,7 +408,7 @@ def main(page: ft.Page):
             [sabresShots, sabresGoals] = startGameUpdate(GT, oppName, url, rosters)
 
             # Calls the plotter function to initialize it if the user wants the GUI
-            if not gui:
+            if gui:
                 plotter(0)
 
             [_, _, sabresScore, OpScore, isOver, _, _] = duringGameUpdate(SHOA, OHOA, url, rosters)
@@ -423,7 +423,7 @@ def main(page: ft.Page):
                 [didSabresScore, didOppScore, sabresScore, OpScore, isOver, sabresGoal, shots] = \
                     duringGameUpdate(SHOA, OHOA, url, rosters)
                 # Plots if there was a sabres shot on goal
-                if shots and not gui:
+                if shots and gui:
                     sabresShots = pd.concat([sabresShots, pd.DataFrame(shots, columns=['x', 'y'])], ignore_index=True)
                     plotter(1)
 
@@ -432,7 +432,7 @@ def main(page: ft.Page):
                     printScoreUpdate(oppAbbreviation, oppName, OpScore, sabresScore, didSabresScore, isOver)
                     if sabresGoal['SN'] != -1:
                         sabresGoals = pd.concat([sabresGoals, pd.DataFrame([sabresGoal])], ignore_index=True)
-                    if not gui:
+                    if gui:
                         plotter(2)
 
                 # Print score if the opponent has scored.
@@ -462,7 +462,7 @@ if '-g' in args:
         gui = False
 else:
     # If the '-g' flag is not present, set gui to True by default
-    gui = True
+    gui = False
 
 if '-w' in args:
     value = argumentHandling('-w', args)
@@ -475,7 +475,7 @@ else:
     webUI = False
 
 # Check if gui mode is disabled
-if not gui:
+if gui:
     if webUI:
         # Launch the flet app with the main function as the target for visualization
         ft.app(target=main, assets_dir='./', view=ft.AppView.WEB_BROWSER)

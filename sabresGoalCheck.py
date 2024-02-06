@@ -408,7 +408,7 @@ def main(page: ft.Page):
             [sabresShots, sabresGoals] = startGameUpdate(GT, oppName, url, rosters)
 
             # Calls the plotter function to initialize it if the user wants the GUI
-            if not headless:
+            if not gui:
                 plotter(0)
 
             [_, _, sabresScore, OpScore, isOver, _, _] = duringGameUpdate(SHOA, OHOA, url, rosters)
@@ -423,7 +423,7 @@ def main(page: ft.Page):
                 [didSabresScore, didOppScore, sabresScore, OpScore, isOver, sabresGoal, shots] = \
                     duringGameUpdate(SHOA, OHOA, url, rosters)
                 # Plots if there was a sabres shot on goal
-                if shots and not headless:
+                if shots and not gui:
                     sabresShots = pd.concat([sabresShots, pd.DataFrame(shots, columns=['x', 'y'])], ignore_index=True)
                     plotter(1)
 
@@ -432,7 +432,7 @@ def main(page: ft.Page):
                     printScoreUpdate(oppAbbreviation, oppName, OpScore, sabresScore, didSabresScore, isOver)
                     if sabresGoal['SN'] != -1:
                         sabresGoals = pd.concat([sabresGoals, pd.DataFrame([sabresGoal])], ignore_index=True)
-                    if not headless:
+                    if not gui:
                         plotter(2)
 
                 # Print score if the opponent has scored.
@@ -455,14 +455,14 @@ if '-g' in args:
     # Retrieve the value following the '-g' flag using the argumentHandling function
     value = argumentHandling('-g', args)
 
-    # If the value is evaluated as True, set headless to True; otherwise, set it to False
+    # If the value is evaluated as True, set gui to True; otherwise, set it to False
     if eval(value):
-        headless = True
+        gui = True
     else:
-        headless = False
+        gui = False
 else:
-    # If the '-g' flag is not present, set headless to True by default
-    headless = True
+    # If the '-g' flag is not present, set gui to True by default
+    gui = True
 
 if '-w' in args:
     value = argumentHandling('-w', args)
@@ -474,14 +474,14 @@ if '-w' in args:
 else:
     webUI = False
 
-# Check if headless mode is disabled
-if not headless:
+# Check if gui mode is disabled
+if not gui:
     if webUI:
         # Launch the flet app with the main function as the target for visualization
         ft.app(target=main, assets_dir='./', view=ft.AppView.WEB_BROWSER)
     else:
         ft.app(target=main)
 else:
-    # Run the main function without visualization if headless mode is enabled
+    # Run the main function without visualization if gui mode is enabled
     main(-1)
 

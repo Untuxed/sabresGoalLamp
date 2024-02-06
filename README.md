@@ -36,6 +36,12 @@ Example for starting a local GUI:
 python sabresGoalCheck.py -g True -w False
 ```
 
+or 
+
+```bash
+python sabresGoalCheck.py -g True
+```
+
 2b. Automatically run the script (if it is in your documents folder) by running "SabreLamp.command." This command just plays goal sounds.
 
 ## How It Works

@@ -355,6 +355,7 @@ def main(page: ft.Page):
         if plotStatus == 0:
             print('init')
             fig, axs = plt.subplots(1, 1)
+            page.title = "Sabres Goal Lamp - GUI"
         elif plotStatus == 1:
             plt.cla()
             print("tried to update shots")
@@ -373,7 +374,6 @@ def main(page: ft.Page):
         rink.scatter('x', 'y', data=sabresShots, ax=axs, marker='X', c='#003087')
         rink.scatter("x", "y", ax=axs, facecolor="#003087", edgecolor="black", s=300, data=sabresGoals)
         rink.text("x", "y", s="SN", ax=axs, ha="center", va="center", fontsize=14, data=sabresGoals, c='#FFFFFF')
-        page.title = "Sabres Goal Lamp - GUI"
         if webUI:
             plt.savefig('./rink.jpg', bbox_inches='tight')
             img = ft.Image(src='rink.jpg')

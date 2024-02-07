@@ -341,7 +341,7 @@ def main(page: ft.Page):
     """
 
     def guiUpdate(plotStatus):
-        def plotter():
+      def plotter():
             """
             Plotting function to visualize shots and goals on a rink image.
 
@@ -537,7 +537,7 @@ if '-g' in args:
     else:
         gui = False
 else:
-    # If the '-h' flag is not present, set headless to True by default
+    # If the '-g' flag is not present, set gui to False by default
     gui = False
 
 if '-w' in args:

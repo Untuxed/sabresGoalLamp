@@ -341,7 +341,7 @@ def main(page: ft.Page):
     """
 
     def guiUpdate(plotStatus):
-      def plotter():
+        def plotter():
             """
             Plotting function to visualize shots and goals on a rink image.
 

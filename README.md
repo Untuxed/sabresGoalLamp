@@ -30,10 +30,16 @@ There are now optional flags for starting a flet GUI, (-g and -w).
   
   -w (webApp, default False) controls if the GUI is a webApp. Eventually this project will transition to a webApp permanently, for now setting this flag to True will give a sneak peak to the webApp. 
 
-Example for starting a local GUI:
+Examples for starting a local GUI:
 
 ```bash
 python sabresGoalCheck.py -g True -w False
+```
+
+or 
+
+```bash
+python sabresGoalCheck.py -g True
 ```
 
 2b. Automatically run the script (if it is in your documents folder) by running "SabreLamp.command." This command just plays goal sounds.

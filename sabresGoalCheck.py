@@ -257,14 +257,16 @@ def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url, Rosters, slee
     playsBool = numPlays < newNumPlays
     gameOver = LIVEGAME_response['gameState'] == "FINAL"
 
+    if opScoreBool:
+        playsound.playsound('./audioFiles/losing_horn.mp3')
+
+    if sabreScoreBool:
+        LIVEGAME_response = requests.get(LiveGame_url).json()
+        goalData = LIVEGAME_response["plays"]
+        sabresGoalInfo = playGoalSong(goalData, LiveGame_url)
+
     if playsBool:
         print(newNumPlays, sabres_score, newSabresScore)
-        if sabreScoreBool:
-            LIVEGAME_response = requests.get(LiveGame_url).json()
-            goalData = LIVEGAME_response["plays"]
-            sabresGoalInfo = playGoalSong(goalData, LiveGame_url)
-        if opScoreBool:
-            playsound.playsound('./audioFiles/losing_horn.mp3')
         i = numPlays
         while i < newNumPlays:
             i += 1
@@ -355,16 +357,6 @@ def main(page: ft.Page):
             if plotStatus == 0:
                 print('init')
                 page.title = "Sabres Goal Lamp - GUI"
-                fig, axs = plt.subplots(1, 1)
-                rink = NHLRink(
-                    sabresLogo={
-                        'feature_class': RinkImage,
-                        'image_path': 'https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Buffalo_Sabres_Logo.svg/240px'
-                                      '-Buffalo_Sabres_Logo.svg.png',
-                        "x": 0, "length": 27, "width": 27,
-                        "zorder": 15, "alpha": 0.5,
-                    }
-                )
             elif plotStatus == 1:
                 plt.cla()
                 print("tried to update shots")
@@ -372,9 +364,22 @@ def main(page: ft.Page):
                 plt.cla()
                 print("tried to update goals")
 
+            fig, axs = plt.subplots(1, 1)
+
+            rink = NHLRink(
+                sabresLogo={
+                    'feature_class': RinkImage,
+                    'image_path': 'https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Buffalo_Sabres_Logo.svg/240px'
+                                  '-Buffalo_Sabres_Logo.svg.png',
+                    "x": 0, "length": 27, "width": 27,
+                    "zorder": 15, "alpha": 0.5,
+                }
+            )
+
             rink.scatter('x', 'y', data=sabresShots, ax=axs, marker='X', c='#003087')
             rink.scatter("x", "y", ax=axs, facecolor="#003087", edgecolor="black", s=300, data=sabresGoals)
-            rink.text("x", "y", s="SN", ax=axs, ha="center", va="center", fontsize=14, data=sabresGoals, c='#FFFFFF')
+            if len(sabresGoals["x"])>0:
+                rink.text("x", "y", s="SN", ax=axs, ha="center", va="center", fontsize=14, data=sabresGoals, c='#FFFFFF')
             plt.savefig('./rink.jpg', bbox_inches='tight')
 
         def getGoalData():
@@ -389,6 +394,9 @@ def main(page: ft.Page):
 
         plotter()
         getGoalData()
+        img = ft.Image(src='./rink.jpg')
+        print(np.shape(img))
+        del img
         img = ft.Image(src='./rink.jpg')
 
         gameScore = ft.Row(
@@ -490,7 +498,7 @@ def main(page: ft.Page):
                     duringGameUpdate(SHOA, OHOA, url, rosters, 10)
                 # Plots if there was a sabres shot on goal
                 if shots and gui:
-                    sabresShots = pd.concat([sabresShots, pd.DataFrame(shots, columns=['x', 'y'])], ignore_index=True)
+                    sabresShots = pd.concat([sabresShots, pd.DataFrame(shots, columns=['x', 'y', 'EN'])], ignore_index=True)
                     guiUpdate(1)
 
                 # Prints to the screen if the sabres scored. If the GUI is active plot to the screen.
@@ -504,6 +512,8 @@ def main(page: ft.Page):
                 # Print score if the opponent has scored.
                 if didOppScore:
                     printScoreUpdate(oppAbbreviation, oppName, OpScore, sabresScore, didSabresScore, isOver)
+
+                page.update()
 
             # Calls print function one last time
             printScoreUpdate(oppAbbreviation, oppName, OpScore, sabresScore, didSabresScore, isOver)

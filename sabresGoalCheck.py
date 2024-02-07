@@ -373,7 +373,8 @@ def main(page: ft.Page):
         )
         rink.scatter('x', 'y', data=sabresShots, ax=axs, marker='X', c='#003087')
         rink.scatter("x", "y", ax=axs, facecolor="#003087", edgecolor="black", s=300, data=sabresGoals)
-        rink.text("x", "y", s="SN", ax=axs, ha="center", va="center", fontsize=14, data=sabresGoals, c='#FFFFFF')
+        if len(sabresGoals["x"]) > 0:
+            rink.text("x", "y", s="SN", ax=axs, ha="center", va="center", fontsize=14, data=sabresGoals, c='#FFFFFF')
         if webUI:
             plt.savefig('./rink.jpg', bbox_inches='tight')
             img = ft.Image(src='rink.jpg')

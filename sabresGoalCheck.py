@@ -425,7 +425,7 @@ def main(page: ft.Page):
                     duringGameUpdate(SHOA, OHOA, url, rosters)
                 # Plots if there was a sabres shot on goal
                 if shots and gui:
-                    sabresShots = pd.concat([sabresShots, pd.DataFrame(shots, columns=['x', 'y'])], ignore_index=True)
+                    sabresShots = pd.concat([sabresShots, pd.DataFrame(shots, columns=['x', 'y', 'EN'])], ignore_index=True)
                     plotter(1)
 
                 # Prints to the screen if the sabres scored. If the GUI is active plot to the screen.

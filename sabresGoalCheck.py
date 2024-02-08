@@ -105,13 +105,16 @@ def startGameUpdate(gameTimeLocal, opName, gameURL, gameRosters):
         scorerNumber = -1
         sabresShots = []
         sabresGoals = []
+        opShots = []
 
         if events:
             for event in events:
                 if event['typeDescKey'] == 'shot-on-goal':
                     data = event['details']
                     if data['eventOwnerTeamId'] == 7:
-                        sabresShots.append(np.array([data['xCoord'], data['yCoord']]))
+                        sabresShots.append(np.array([data['xCoord'], data['yCoord'], event['sortOrder']]))
+                    else:
+                        opShots.append(np.array([data['xCoord'], data['yCoord'], event['sortOrder']]))
                 elif event['typeDescKey'] == 'goal':
                     data = event['details']
                     if data['eventOwnerTeamId'] == 7:
@@ -120,9 +123,10 @@ def startGameUpdate(gameTimeLocal, opName, gameURL, gameRosters):
                                 scorerNumber = player['sweaterNumber']
                         sabresGoals.append(np.array([data['xCoord'], data['yCoord'], scorerNumber, event['sortOrder']]))
 
-        sabresShots = pd.DataFrame(sabresShots, columns=['x', 'y'])
+        sabresShots = pd.DataFrame(sabresShots, columns=['x', 'y', 'EN'])
+        opShots = pd.DataFrame(opShots, columns=['x', 'y', 'EN'])
         sabresGoals = pd.DataFrame(sabresGoals, columns=['x', 'y', 'SN', 'EN'])
-        return sabresShots, sabresGoals
+        return sabresShots, sabresGoals, opShots
 
 
 # Function that does most of the updating throughout the game, checks if the Sabres or their opponent has scored
@@ -235,6 +239,7 @@ def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url, Rosters, slee
 
     sabresGoalInfo = {'x': -1, 'y': -1, 'SN': -1, 'EN': -1}
     sabresShot = []
+    opShot = []
 
     # Gets the current score of the game and number of plays
     LIVEGAME_response = requests.get(LiveGame_url).json()
@@ -272,11 +277,15 @@ def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url, Rosters, slee
             i += 1
             event = LIVEGAME_response['plays'][i - 1]
             print(event['typeDescKey'])
-            if event['typeDescKey'] == 'shot-on-goal' and event['details']['eventOwnerTeamId'] == SABRES_TEAM_ID:
-                sabresShot.append(
-                    np.array([event['details']['xCoord'], event['details']['yCoord'], event['sortOrder']]))
+            if event['typeDescKey'] == 'shot-on-goal':
+                if event['details']['eventOwnerTeamId'] == SABRES_TEAM_ID:
+                    sabresShot.append(
+                        np.array([event['details']['xCoord'], event['details']['yCoord'], event['sortOrder']]))
+                else:
+                    opShot.append(
+                        np.array([event['details']['xCoord'], event['details']['yCoord'], event['sortOrder']]))
 
-    return sabreScoreBool, opScoreBool, newSabresScore, newOpScore, gameOver, sabresGoalInfo, sabresShot
+    return sabreScoreBool, opScoreBool, newSabresScore, newOpScore, gameOver, sabresGoalInfo, sabresShot, opShot
 
 
 def printScoreUpdate(opTeamAbbreviation, opTeamName, opTeamScore, sabresScoreTotal, bufScore, isFinal):
@@ -378,8 +387,9 @@ def main(page: ft.Page):
 
             rink.scatter('x', 'y', data=sabresShots, ax=axs, marker='X', c='#003087')
             rink.scatter("x", "y", ax=axs, facecolor="#003087", edgecolor="black", s=300, data=sabresGoals)
-            if len(sabresGoals["x"])>0:
-                rink.text("x", "y", s="SN", ax=axs, ha="center", va="center", fontsize=14, data=sabresGoals, c='#FFFFFF')
+            if len(sabresGoals["x"]) > 0:
+                rink.text("x", "y", s="SN", ax=axs, ha="center", va="center", fontsize=14, data=sabresGoals,
+                          c='#FFFFFF')
             plt.savefig('./rink.jpg', bbox_inches='tight')
 
         def getGoalData():
@@ -395,9 +405,10 @@ def main(page: ft.Page):
         plotter()
         getGoalData()
         img = ft.Image(src='./rink.jpg')
-        print(np.shape(img))
+        print(img)
         del img
         img = ft.Image(src='./rink.jpg')
+        page.update()
 
         gameScore = ft.Row(
             controls=[
@@ -419,11 +430,32 @@ def main(page: ft.Page):
             alignment=ft.MainAxisAlignment.START
         )
 
+        gameShots = ft.Row(
+            controls=[
+                ft.Column(
+                    controls=[
+                        ft.Text(f'Sabres: {len(sabresShots.index)}', size=15, weight=ft.FontWeight.BOLD)
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    width=257
+                ),
+                ft.Column(
+                    controls=[
+                        ft.Text(oppName + f': {len(opShots.index)}', size=15, weight=ft.FontWeight.BOLD)
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    width=257
+                )
+            ],
+            alignment=ft.MainAxisAlignment.START
+        )
+
         rinkData = ft.Column(
             controls=[
                 ft.Text('Rink Image', size=30, weight=ft.FontWeight.BOLD),
                 img,
-                gameScore
+                gameScore,
+                gameShots
             ],
             height=page.height,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER
@@ -477,11 +509,12 @@ def main(page: ft.Page):
 
             sabresGoals = pd.DataFrame(columns=['x', 'y', 'SN', 'EN'])
             sabresShots = pd.DataFrame(columns=['x', 'y', 'EN'])
+            opShots = pd.DataFrame(columns=['x', 'y', 'EN'])
 
             # Call start game function
-            [sabresShots, sabresGoals] = startGameUpdate(GT, oppName, url, rosters)
+            [sabresShots, sabresGoals, opShots] = startGameUpdate(GT, oppName, url, rosters)
 
-            [_, _, sabresScore, OpScore, isOver, _, _] = duringGameUpdate(SHOA, OHOA, url, rosters, 0)
+            [_, _, sabresScore, OpScore, isOver, _, _, _] = duringGameUpdate(SHOA, OHOA, url, rosters, 0)
 
             # Calls the plotter function to initialize it if the user wants the GUI
             if gui:
@@ -494,11 +527,17 @@ def main(page: ft.Page):
             # Main loop for when the game is going on
             while not isOver:
                 # Updates if the game is going on
-                [didSabresScore, didOppScore, sabresScore, OpScore, isOver, sabresGoal, shots] = \
+                [didSabresScore, didOppScore, sabresScore, OpScore, isOver, sabresGoal, sabresShot, OpShot] = \
                     duringGameUpdate(SHOA, OHOA, url, rosters, 10)
                 # Plots if there was a sabres shot on goal
-                if shots and gui:
-                    sabresShots = pd.concat([sabresShots, pd.DataFrame(shots, columns=['x', 'y', 'EN'])], ignore_index=True)
+                if sabresShot and gui:
+                    sabresShots = pd.concat([sabresShots, pd.DataFrame(sabresShot, columns=['x', 'y', 'EN'])],
+                                            ignore_index=True)
+                    guiUpdate(1)
+
+                if OpShot and gui:
+                    opShots = pd.concat([opShots, pd.DataFrame(OpShot, columns=['x', 'y', 'EN'])],
+                                        ignore_index=True)
                     guiUpdate(1)
 
                 # Prints to the screen if the sabres scored. If the GUI is active plot to the screen.

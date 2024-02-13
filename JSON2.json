@@ -1,0 +1,737 @@
+{
+    "id": 2023020204,
+    "season": 20232024,
+    "gameType": 2,
+    "gameDate": "2023-11-10",
+    "venue": {
+        "default": "KeyBank Center"
+    },
+    "startTimeUTC": "2023-11-11T00:00:00Z",
+    "easternUTCOffset": "-05:00",
+    "venueUTCOffset": "-05:00",
+    "tvBroadcasts": [
+        {
+            "id": 28,
+            "market": "H",
+            "countryCode": "US",
+            "network": "MSG-B"
+        },
+        {
+            "id": 284,
+            "market": "N",
+            "countryCode": "CA",
+            "network": "SN1"
+        },
+        {
+            "id": 363,
+            "market": "A",
+            "countryCode": "US",
+            "network": "BSWI"
+        },
+        {
+            "id": 395,
+            "market": "A",
+            "countryCode": "US",
+            "network": "BSNX"
+        }
+    ],
+    "gameState": "OFF",
+    "gameScheduleState": "OK",
+    "period": 3,
+    "periodDescriptor": {
+        "number": 3,
+        "periodType": "REG"
+    },
+    "awayTeam": {
+        "id": 30,
+        "name": {
+            "default": "Wild"
+        },
+        "abbrev": "MIN",
+        "score": 2,
+        "sog": 35,
+        "logo": "https://assets.nhle.com/logos/nhl/svg/MIN_light.svg",
+        "onIce": []
+    },
+    "homeTeam": {
+        "id": 7,
+        "name": {
+            "default": "Sabres"
+        },
+        "abbrev": "BUF",
+        "score": 3,
+        "sog": 25,
+        "logo": "https://assets.nhle.com/logos/nhl/svg/BUF_light.svg",
+        "onIce": []
+    },
+    "clock": {
+        "timeRemaining": "00:00",
+        "secondsRemaining": 0,
+        "running": false,
+        "inIntermission": false
+    },
+    "rosterSpots": [
+        {
+            "teamId": 30,
+            "playerId": 8470594,
+            "firstName": {
+                "default": "Marc-Andre"
+            },
+            "lastName": {
+                "default": "Fleury"
+            },
+            "sweaterNumber": 29,
+            "positionCode": "G",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8470594.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8473446,
+            "firstName": {
+                "default": "Erik"
+            },
+            "lastName": {
+                "default": "Johnson"
+            },
+            "sweaterNumber": 6,
+            "positionCode": "D",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8473446.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8473449,
+            "firstName": {
+                "default": "Kyle"
+            },
+            "lastName": {
+                "default": "Okposo"
+            },
+            "sweaterNumber": 21,
+            "positionCode": "R",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8473449.png"
+        },
+        {
+            "teamId": 30,
+            "playerId": 8474034,
+            "firstName": {
+                "default": "Pat"
+            },
+            "lastName": {
+                "default": "Maroon"
+            },
+            "sweaterNumber": 20,
+            "positionCode": "L",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8474034.png"
+        },
+        {
+            "teamId": 30,
+            "playerId": 8474567,
+            "firstName": {
+                "default": "Zach"
+            },
+            "lastName": {
+                "default": "Bogosian"
+            },
+            "sweaterNumber": 24,
+            "positionCode": "D",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8474567.png"
+        },
+        {
+            "teamId": 30,
+            "playerId": 8474716,
+            "firstName": {
+                "default": "Jared"
+            },
+            "lastName": {
+                "default": "Spurgeon"
+            },
+            "sweaterNumber": 46,
+            "positionCode": "D",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8474716.png"
+        },
+        {
+            "teamId": 30,
+            "playerId": 8475149,
+            "firstName": {
+                "default": "Marcus"
+            },
+            "lastName": {
+                "default": "Johansson"
+            },
+            "sweaterNumber": 90,
+            "positionCode": "L",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8475149.png"
+        },
+        {
+            "teamId": 30,
+            "playerId": 8475220,
+            "firstName": {
+                "default": "Marcus"
+            },
+            "lastName": {
+                "default": "Foligno"
+            },
+            "sweaterNumber": 17,
+            "positionCode": "L",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8475220.png"
+        },
+        {
+            "teamId": 30,
+            "playerId": 8475692,
+            "firstName": {
+                "default": "Mats"
+            },
+            "lastName": {
+                "default": "Zuccarello"
+            },
+            "sweaterNumber": 36,
+            "positionCode": "R",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8475692.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8475784,
+            "firstName": {
+                "default": "Jeff"
+            },
+            "lastName": {
+                "default": "Skinner"
+            },
+            "sweaterNumber": 53,
+            "positionCode": "L",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8475784.png"
+        },
+        {
+            "teamId": 30,
+            "playerId": 8476463,
+            "firstName": {
+                "default": "Jonas"
+            },
+            "lastName": {
+                "default": "Brodin"
+            },
+            "sweaterNumber": 25,
+            "positionCode": "D",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8476463.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8476878,
+            "firstName": {
+                "default": "Zemgus"
+            },
+            "lastName": {
+                "default": "Girgensons"
+            },
+            "sweaterNumber": 28,
+            "positionCode": "L",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8476878.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8477365,
+            "firstName": {
+                "default": "Connor"
+            },
+            "lastName": {
+                "default": "Clifton"
+            },
+            "sweaterNumber": 75,
+            "positionCode": "D",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8477365.png"
+        },
+        {
+            "teamId": 30,
+            "playerId": 8477451,
+            "firstName": {
+                "default": "Ryan"
+            },
+            "lastName": {
+                "default": "Hartman"
+            },
+            "sweaterNumber": 38,
+            "positionCode": "R",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8477451.png"
+        },
+        {
+            "teamId": 30,
+            "playerId": 8477541,
+            "firstName": {
+                "default": "Dakota"
+            },
+            "lastName": {
+                "default": "Mermis"
+            },
+            "sweaterNumber": 6,
+            "positionCode": "D",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8477541.png"
+        },
+        {
+            "teamId": 30,
+            "playerId": 8478136,
+            "firstName": {
+                "default": "Jake",
+                "cs": "Jacob",
+                "de": "Jacob",
+                "es": "Jacob",
+                "fi": "Jacob",
+                "sk": "Jacob",
+                "sv": "Jacob"
+            },
+            "lastName": {
+                "default": "Middleton"
+            },
+            "sweaterNumber": 5,
+            "positionCode": "D",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8478136.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8478413,
+            "firstName": {
+                "default": "Jordan"
+            },
+            "lastName": {
+                "default": "Greenway"
+            },
+            "sweaterNumber": 12,
+            "positionCode": "L",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8478413.png"
+        },
+        {
+            "teamId": 30,
+            "playerId": 8478493,
+            "firstName": {
+                "default": "Joel"
+            },
+            "lastName": {
+                "default": "Eriksson Ek"
+            },
+            "sweaterNumber": 14,
+            "positionCode": "C",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8478493.png"
+        },
+        {
+            "teamId": 30,
+            "playerId": 8478864,
+            "firstName": {
+                "default": "Kirill"
+            },
+            "lastName": {
+                "default": "Kaprizov"
+            },
+            "sweaterNumber": 97,
+            "positionCode": "L",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8478864.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8479370,
+            "firstName": {
+                "default": "Tyson"
+            },
+            "lastName": {
+                "default": "Jost"
+            },
+            "sweaterNumber": 17,
+            "positionCode": "C",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8479370.png"
+        },
+        {
+            "teamId": 30,
+            "playerId": 8479406,
+            "firstName": {
+                "default": "Filip"
+            },
+            "lastName": {
+                "default": "Gustavsson"
+            },
+            "sweaterNumber": 32,
+            "positionCode": "G",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8479406.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8479420,
+            "firstName": {
+                "default": "Tage"
+            },
+            "lastName": {
+                "default": "Thompson"
+            },
+            "sweaterNumber": 72,
+            "positionCode": "C",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8479420.png"
+        },
+        {
+            "teamId": 30,
+            "playerId": 8479520,
+            "firstName": {
+                "default": "Brandon"
+            },
+            "lastName": {
+                "default": "Duhaime"
+            },
+            "sweaterNumber": 21,
+            "positionCode": "R",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8479520.png"
+        },
+        {
+            "teamId": 30,
+            "playerId": 8479968,
+            "firstName": {
+                "default": "Vinni"
+            },
+            "lastName": {
+                "default": "Lettieri"
+            },
+            "sweaterNumber": 10,
+            "positionCode": "C",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8479968.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8479999,
+            "firstName": {
+                "default": "Casey"
+            },
+            "lastName": {
+                "default": "Mittelstadt"
+            },
+            "sweaterNumber": 37,
+            "positionCode": "C",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8479999.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8480035,
+            "firstName": {
+                "default": "Henri"
+            },
+            "lastName": {
+                "default": "Jokiharju"
+            },
+            "sweaterNumber": 10,
+            "positionCode": "D",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8480035.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8480045,
+            "firstName": {
+                "default": "Ukko-Pekka"
+            },
+            "lastName": {
+                "default": "Luukkonen"
+            },
+            "sweaterNumber": 1,
+            "positionCode": "G",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8480045.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8480839,
+            "firstName": {
+                "default": "Rasmus"
+            },
+            "lastName": {
+                "default": "Dahlin"
+            },
+            "sweaterNumber": 26,
+            "positionCode": "D",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8480839.png"
+        },
+        {
+            "teamId": 30,
+            "playerId": 8480980,
+            "firstName": {
+                "default": "Connor"
+            },
+            "lastName": {
+                "default": "Dewar"
+            },
+            "sweaterNumber": 26,
+            "positionCode": "C",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8480980.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8481522,
+            "firstName": {
+                "default": "Peyton"
+            },
+            "lastName": {
+                "default": "Krebs"
+            },
+            "sweaterNumber": 19,
+            "positionCode": "C",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8481522.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8481528,
+            "firstName": {
+                "default": "Dylan"
+            },
+            "lastName": {
+                "default": "Cozens"
+            },
+            "sweaterNumber": 24,
+            "positionCode": "C",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8481528.png"
+        },
+        {
+            "teamId": 30,
+            "playerId": 8481557,
+            "firstName": {
+                "default": "Matt"
+            },
+            "lastName": {
+                "default": "Boldy"
+            },
+            "sweaterNumber": 12,
+            "positionCode": "L",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8481557.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8481564,
+            "firstName": {
+                "default": "Ryan"
+            },
+            "lastName": {
+                "default": "Johnson"
+            },
+            "sweaterNumber": 33,
+            "positionCode": "D",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8481564.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8481751,
+            "firstName": {
+                "default": "Lukas"
+            },
+            "lastName": {
+                "default": "Rousek"
+            },
+            "sweaterNumber": 13,
+            "positionCode": "R",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8481751.png"
+        },
+        {
+            "teamId": 30,
+            "playerId": 8482079,
+            "firstName": {
+                "default": "Marco"
+            },
+            "lastName": {
+                "default": "Rossi"
+            },
+            "sweaterNumber": 23,
+            "positionCode": "C",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8482079.png"
+        },
+        {
+            "teamId": 30,
+            "playerId": 8482122,
+            "firstName": {
+                "default": "Brock"
+            },
+            "lastName": {
+                "default": "Faber"
+            },
+            "sweaterNumber": 7,
+            "positionCode": "D",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/MIN/8482122.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8482175,
+            "firstName": {
+                "default": "JJ"
+            },
+            "lastName": {
+                "default": "Peterka"
+            },
+            "sweaterNumber": 77,
+            "positionCode": "R",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8482175.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8482221,
+            "firstName": {
+                "default": "Devon"
+            },
+            "lastName": {
+                "default": "Levi"
+            },
+            "sweaterNumber": 27,
+            "positionCode": "G",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8482221.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8482671,
+            "firstName": {
+                "default": "Owen"
+            },
+            "lastName": {
+                "default": "Power"
+            },
+            "sweaterNumber": 25,
+            "positionCode": "D",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8482671.png"
+        },
+        {
+            "teamId": 7,
+            "playerId": 8483512,
+            "firstName": {
+                "default": "Matt"
+            },
+            "lastName": {
+                "default": "Savoie"
+            },
+            "sweaterNumber": 93,
+            "positionCode": "C",
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/BUF/8483512.png"
+        }
+    ],
+    "displayPeriod": 1,
+    "gameOutcome": {
+        "lastPeriodType": "REG"
+    },
+    "plays": [
+        {
+            "eventId": 102,
+            "period": 1,
+            "periodDescriptor": {
+                "number": 1,
+                "periodType": "REG"
+            },
+            "timeInPeriod": "00:00",
+            "timeRemaining": "20:00",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 520,
+            "typeDescKey": "period-start",
+            "sortOrder": 10
+        },
+        {
+            "eventId": 101,
+            "period": 1,
+            "periodDescriptor": {
+                "number": 1,
+                "periodType": "REG"
+            },
+            "timeInPeriod": "00:00",
+            "timeRemaining": "20:00",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 11,
+            "details": {
+                "eventOwnerTeamId": 30,
+                "losingPlayerId": 8479420,
+                "winningPlayerId": 8478493,
+                "xCoord": 0,
+                "yCoord": 0,
+                "zoneCode": "N"
+            }
+        },
+        {
+            "eventId": 8,
+            "period": 1,
+            "periodDescriptor": {
+                "number": 1,
+                "periodType": "REG"
+            },
+            "timeInPeriod": "00:21",
+            "timeRemaining": "19:39",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 535,
+            "typeDescKey": "delayed-penalty",
+            "sortOrder": 12,
+            "details": {
+                "eventOwnerTeamId": 30
+            }
+        },
+        {
+            "eventId": 57,
+            "period": 1,
+            "periodDescriptor": {
+                "number": 1,
+                "periodType": "REG"
+            },
+            "timeInPeriod": "00:25",
+            "timeRemaining": "19:35",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 509,
+            "typeDescKey": "penalty",
+            "sortOrder": 13,
+            "details": {
+                "xCoord": -94,
+                "yCoord": 23,
+                "zoneCode": "O",
+                "typeCode": "MIN",
+                "descKey": "tripping",
+                "duration": 2,
+                "committedByPlayerId": 8478493,
+                "drawnByPlayerId": 8481564,
+                "eventOwnerTeamId": 30
+            }
+        },
+        {
+            "eventId": 103,
+            "period": 1,
+            "periodDescriptor": {
+                "number": 1,
+                "periodType": "REG"
+            },
+            "timeInPeriod": "00:25",
+            "timeRemaining": "19:35",
+            "situationCode": "1451",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 17,
+            "details": {
+                "eventOwnerTeamId": 30,
+                "losingPlayerId": 8481528,
+                "winningPlayerId": 8480980,
+                "xCoord": 69,
+                "yCoord": -22,
+                "zoneCode": "D"
+            }
+        },
+        {
+            "eventId": 62,
+            "period": 1,
+            "periodDescriptor": {
+                "number": 1,
+                "periodType": "REG"
+            },
+            "timeInPeriod": "01:20",
+            "timeRemaining": "18:40",
+            "situationCode": "1451",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 506,
+            "typeDescKey": "shot-on-goal",
+            "sortOrder": 20,
+            "details": {
+                "xCoord": ,
+                "yCoord": ,
+                "zoneCode": "O",
+                "shotType": ,
+                "shootingPlayerId": ,
+                "goalieInNetId": ,
+                "eventOwnerTeamId": 7,
+                "awaySOG": 0,
+                "homeSOG": 1
+            }
+        }
+ }

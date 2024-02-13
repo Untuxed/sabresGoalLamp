@@ -99,7 +99,7 @@ def startGameUpdate(gameTimeLocal, opName, gameURL, gameRosters):
     if datetime.datetime.now() < gameTimeLocal:
         time.sleep(tD.seconds - 15)
         playsound.playsound('./audioFiles/SabreDance.mp3')
-        return -1, -1
+        return -1, -1, -1, -1, -1
     else:
         events = requests.get(gameURL).json()['plays']
         scorerNumber = -1
@@ -123,10 +123,13 @@ def startGameUpdate(gameTimeLocal, opName, gameURL, gameRosters):
                                 scorerNumber = player['sweaterNumber']
                         sabresGoals.append(np.array([data['xCoord'], data['yCoord'], scorerNumber, event['sortOrder']]))
 
+        period = events[-1]['period']
+        timeRemaining = events[-1]['timeRemaining']
+
         sabresShots = pd.DataFrame(sabresShots, columns=['x', 'y', 'EN'])
         opShots = pd.DataFrame(opShots, columns=['x', 'y', 'EN'])
         sabresGoals = pd.DataFrame(sabresGoals, columns=['x', 'y', 'SN', 'EN'])
-        return sabresShots, sabresGoals, opShots
+        return sabresShots, sabresGoals, opShots, period, timeRemaining
 
 
 # Function that does most of the updating throughout the game, checks if the Sabres or their opponent has scored
@@ -285,7 +288,10 @@ def duringGameUpdate(SabresHomeOrAway, OpHomeOrAway, LiveGame_url, Rosters, slee
                     opShot.append(
                         np.array([event['details']['xCoord'], event['details']['yCoord'], event['sortOrder']]))
 
-    return sabreScoreBool, opScoreBool, newSabresScore, newOpScore, gameOver, sabresGoalInfo, sabresShot, opShot
+    period = LIVEGAME_response['plays'][-1]['period']
+    timeRemaining = LIVEGAME_response['plays'][-1]['timeRemaining']
+
+    return sabreScoreBool, opScoreBool, newSabresScore, newOpScore, gameOver, sabresGoalInfo, sabresShot, opShot, period, timeRemaining
 
 
 def printScoreUpdate(opTeamAbbreviation, opTeamName, opTeamScore, sabresScoreTotal, bufScore, isFinal):
@@ -402,89 +408,129 @@ def main(page: ft.Page):
                         scorers.append(statement)
             return scorers
 
+        def valueUpdate():
+            rinkImage.src = './rink.jpg'
+            periodNumData.value = f'Period: {periodNum}'
+            timeRemainingData.value = f'Time: {timeRemainingPeriod}'
+            sabresScoreData.value = f'Sabres: {sabresScore}'
+            opScoreData.value = f'{oppName}: {OpScore}'
+            sabresShotData.value = f'Sabres: {len(sabresShots.index)}'
+            opShotData.value = f'{oppName}: {len(opShots.index)}'
+
         plotter()
         getGoalData()
-        img = ft.Image(src='./rink.jpg')
-        print(img)
-        del img
-        img = ft.Image(src='./rink.jpg')
-        page.update()
 
-        gameScore = ft.Row(
-            controls=[
-                ft.Column(
-                    controls=[
-                        ft.Text('Sabres: ' + str(sabresScore), size=15, weight=ft.FontWeight.BOLD)
-                    ],
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                    width=257
-                ),
-                ft.Column(
-                    controls=[
-                        ft.Text(oppName + ': ' + str(OpScore), size=15, weight=ft.FontWeight.BOLD)
-                    ],
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                    width=257
-                )
-            ],
-            alignment=ft.MainAxisAlignment.START
-        )
+        if plotStatus == 0:
+            rinkImage = ft.Image()
+            periodNumData = ft.Text(size=15, weight=ft.FontWeight.BOLD)
+            timeRemainingData = ft.Text(size=15, weight=ft.FontWeight.BOLD)
+            sabresScoreData = ft.Text(size=15, weight=ft.FontWeight.BOLD)
+            opScoreData = ft.Text(size=15, weight=ft.FontWeight.BOLD)
+            sabresShotData = ft.Text(size=15, weight=ft.FontWeight.BOLD)
+            opShotData = ft.Text(size=15, weight=ft.FontWeight.BOLD)
+            valueUpdate()
+            periodData = ft.Row(
+                controls=[
+                    ft.Column(
+                        controls=[
+                            periodNumData
+                        ],
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        width=257
+                    ),
+                    ft.Column(
+                        controls=[
+                            timeRemainingData
+                        ],
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        width=257
+                    )
+                ],
+                alignment=ft.MainAxisAlignment.START
+            )
 
-        gameShots = ft.Row(
-            controls=[
-                ft.Column(
-                    controls=[
-                        ft.Text(f'Sabres: {len(sabresShots.index)}', size=15, weight=ft.FontWeight.BOLD)
-                    ],
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                    width=257
-                ),
-                ft.Column(
-                    controls=[
-                        ft.Text(oppName + f': {len(opShots.index)}', size=15, weight=ft.FontWeight.BOLD)
-                    ],
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                    width=257
-                )
-            ],
-            alignment=ft.MainAxisAlignment.START
-        )
+            print(timeRemainingPeriod)
 
-        rinkData = ft.Column(
-            controls=[
-                ft.Text('Rink Image', size=30, weight=ft.FontWeight.BOLD),
-                img,
-                gameScore,
-                gameShots
-            ],
-            height=page.height,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER
-        )
+            gameScore = ft.Row(
+                controls=[
+                    ft.Column(
+                        controls=[
+                            sabresScoreData
+                        ],
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        width=257
+                    ),
+                    ft.Column(
+                        controls=[
+                            opScoreData
+                        ],
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        width=257
+                    )
+                ],
+                alignment=ft.MainAxisAlignment.START
+            )
 
-        goalScorerData = ft.Column(
-            controls=getGoalData()
-        )
+            gameShots = ft.Row(
+                controls=[
+                    ft.Column(
+                        controls=[
+                            sabresShotData
+                        ],
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        width=257
+                    ),
+                    ft.Column(
+                        controls=[
+                            opShotData
+                        ],
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        width=257
+                    )
+                ],
+                alignment=ft.MainAxisAlignment.START
+            )
 
-        goalData = ft.Column(
-            controls=[
-                ft.Text('Goal Data', size=30, weight=ft.FontWeight.BOLD),
-                goalScorerData
-            ],
-            height=page.height,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER
-        )
+            print(sabresShots.index)
 
-        mainPage = ft.Row(
-            controls=[
-                rinkData,
-                goalData
-            ],
-            width=page.width,
-            alignment=ft.MainAxisAlignment.SPACE_EVENLY
-        )
+            rinkData = ft.Column(
+                controls=[
+                    ft.Text('Rink Image', size=30, weight=ft.FontWeight.BOLD),
+                    rinkImage,
+                    periodData,
+                    gameScore,
+                    gameShots
+                ],
+                height=page.height,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER
+            )
 
-        page.add(mainPage)
-        page.update()
+            goalScorerData = ft.Column(
+                controls=getGoalData()
+            )
+
+            goalData = ft.Column(
+                controls=[
+                    ft.Text('Goal Data', size=30, weight=ft.FontWeight.BOLD),
+                    goalScorerData
+                ],
+                height=page.height,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER
+            )
+
+            mainPage = ft.Row(
+                controls=[
+                    rinkData,
+                    goalData
+                ],
+                width=page.width,
+                alignment=ft.MainAxisAlignment.SPACE_EVENLY
+            )
+
+            page.add(mainPage)
+        else:
+            valueUpdate()
+            page.update()
 
     # Main code loop
     baseAPIURL = 'https://api-web.nhle.com/'
@@ -511,11 +557,20 @@ def main(page: ft.Page):
             sabresShots = pd.DataFrame(columns=['x', 'y', 'EN'])
             opShots = pd.DataFrame(columns=['x', 'y', 'EN'])
 
+            if 'periodNum' not in locals():
+                periodNum = 'Pre-Game'
+                timeRemainingPeriod = "20:00"
+                sabresScore = 0
+                OpScore = 0
+
+            if gui:
+                guiUpdate(0)
+
             # Call start game function
-            [sabresShots, sabresGoals, opShots] = startGameUpdate(GT, oppName, url, rosters)
+            [sabresShots, sabresGoals, opShots, periodNum, timeRemainingPeriod] = startGameUpdate(GT, oppName, url,
+                                                                                                  rosters)
 
-            [_, _, sabresScore, OpScore, isOver, _, _, _] = duringGameUpdate(SHOA, OHOA, url, rosters, 0)
-
+            [_, _, sabresScore, OpScore, isOver, _, _, _, _, _] = duringGameUpdate(SHOA, OHOA, url, rosters, 0)
             # Calls the plotter function to initialize it if the user wants the GUI
             if gui:
                 guiUpdate(0)
@@ -527,8 +582,9 @@ def main(page: ft.Page):
             # Main loop for when the game is going on
             while not isOver:
                 # Updates if the game is going on
-                [didSabresScore, didOppScore, sabresScore, OpScore, isOver, sabresGoal, sabresShot, OpShot] = \
-                    duringGameUpdate(SHOA, OHOA, url, rosters, 10)
+
+                [didSabresScore, didOppScore, sabresScore, OpScore, isOver, sabresGoal, sabresShot, OpShot, periodNum,
+                 timeRemainingPeriod] = duringGameUpdate(SHOA, OHOA, url, rosters, 10)
                 # Plots if there was a sabres shot on goal
                 if sabresShot and gui:
                     sabresShots = pd.concat([sabresShots, pd.DataFrame(sabresShot, columns=['x', 'y', 'EN'])],
@@ -551,8 +607,6 @@ def main(page: ft.Page):
                 # Print score if the opponent has scored.
                 if didOppScore:
                     printScoreUpdate(oppAbbreviation, oppName, OpScore, sabresScore, didSabresScore, isOver)
-
-                page.update()
 
             # Calls print function one last time
             printScoreUpdate(oppAbbreviation, oppName, OpScore, sabresScore, didSabresScore, isOver)
